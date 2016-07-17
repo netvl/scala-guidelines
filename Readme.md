@@ -101,7 +101,11 @@ Always use absolute imports; IDEA code style configuration enforces this. Relati
 
 ### Imports location
 
-Always put imports at the top of the file instead of nested scopes. In other words, imports must always be grouped together in one place.
+Always put imports at the top of the file instead of nested scopes. In other words, imports must always be grouped together in one place. 
+
+### Wildcard imports
+
+Avoid using wildcard imports, unless you're importing more than 6 items from the same package. This behavior is also enforced by IDEA.
 
 ## Braces
 
@@ -198,7 +202,7 @@ class PublicInterfaceImpl extends PublicInterface {
 }
 ```
 
-It is acceptable to omit return types for *short* local functions, but only when it is very clear what the return type is, for example:
+It is acceptable to omit return types for *short* local functions or private methods, but only when it is very clear what the return type is, for example:
 
 ```scala
 def updatedUser(user: User) = user.copy(parameter = anotherValue)
@@ -933,6 +937,8 @@ and instead of explicit concatenation:
 println("The value is " + n + ", for your information")
 ```
 
+String interpolation is both more concise and more performant than its alternatives, and it makes the code more readable.
+
 Avoid using long expressions inside the string, though; if computation is long, store it in a lazy variable or a `def`:
 
 ```scala
@@ -953,7 +959,22 @@ def errorsString = errorsIterator.mkString(", ")
 logger.error(s"Errors happened: $errorsString")
 ```
 
-The good variant is longer, but its intention is clearer for an unaccustomed reader.
+The good variant is longer, but its intention is clearer for an unaccustomed reader. As a general rule, avoid nested braces inside the interpolated string. For example, nested field access is fine:
+
+```scala
+val message = "Owner name: ${organization.owner.name}"
+```
+
+But method calls should better be extracted to a separate `def`:
+
+```scala
+// bad
+val message = "Owner email: ${organization.owner.email.getOrElse("<unknown>")}";
+
+// better
+def ownerEmail = organization.owner.email.getOrElse("<unknown>");
+val message = "Owner email: $ownerEmail"
+```
 
 ## Tuples
 
@@ -1014,9 +1035,9 @@ This way the intention of the code is very clear even to a relatively casual rea
 
 # Patterns and architecture
 
-Scala is a multi-paradigm language, combining elements from functional and object-oriented programming. However, this is dangerous combination which may result in a very obscure code, if from both paradigms are used indiscriminately.
+Scala is a multi-paradigm language, combining elements from functional and object-oriented programming. However, this is dangerous combination which may result in a very obscure code, if patterns and features from both paradigms are used indiscriminately.
 
-As a general rule, object-oriented patterns should be used to model the high-level architecture of the program, while functional patterns should be used locally, to write the actual implementation code. Think of object-oriented design as a strategy, and of functional patterns as tactics: apply the commonly known object-oriented patterns when it is necessary to structure the overall program structure, and use functional idioms when you're writing concrete code which manipulates concrete data.
+As a general rule, object-oriented patterns should be used to model the high-level architecture of the program, while functional patterns should be used locally, to write the actual implementation code. Think of object-oriented design as a strategy, and of functional patterns as tactics: apply the commonly known object-oriented patterns when it is necessary to structure the overall program structure, and use functional idioms when you're writing concrete code which manipulates concrete data. For example, don't hesitate to use patterns like facade or adapter when you're designing your class structure, but when you actually begin to fill these classes with implementation, use functional patterns like immutability, optional values and operations on collections instead of what you would do in Java, like imperative loops and mutable collections.
 
 Of course, it is sometimes difficult to make a clean separation, for example, relying on immutability leads to creation of many ADTs, which definitely affect the high-level structure of the program, and vice versa, using dependency injection patterns have very noticeable effect on the concrete implementation. But this approach allows ruling out harmful practices like using high-level functional idioms to structure the overall program (e.g. trying to design the entire program workflow as a monad transformer stack) or blindly using object-oriented patterns to structure low level code (e.g. using virtual dispatch with a trait hierarchy where a simple match would do nicely).
 
@@ -1068,7 +1089,7 @@ Therefore, you may write such implementations. See the section on implicit value
 
 Exceptions are ubiquitous in the JVM ecosystem, however, by their nature they may make control flow less understandable and clear because they are essentially nonlocal returns - they bubble up the call stack without explicit return statements.
 
-Therefore, basing the control flow on exceptions is discouraged. Not only it makes the code less obvious, it also has performance implications - stack unwinding is not free. Do not use exceptions as a substitute for regular control flow instructions.
+Therefore, basing the control flow on exceptions is discouraged. Not only does it make the code less obvious, it also has performance implications - stack unwinding is not free. Do not use exceptions as a substitute for regular control flow instructions.
 
 ### Encoding errors in types
 
@@ -1078,21 +1099,21 @@ All rules described in the section on using chained method calls apply to the `T
 
 ## Functional programming
 
-Design of the Scala language strongly favors functional programming practices, like immutability, value-oriented architecture and pure and referentially transparent functions. To make these practices easy to implement, Scala provides tools like case classes, pattern matching, type inference and lightweight closure syntax.
+Functional programming can loosely be defined as a paradigm which treats computation as a sequence of evaluations of mathematical functions. This implies that it places emphasis on avoiding mutable state and side effects and is heavily based around returning and combining expressions. Among language features usually associated with functional programming are first-class functions, immutability of data, lack of side effects (pure and referentially transparent functions), recursive computations instead of imperative loops, and so on.
 
-Functional programming idioms usually make the code more clear and readable, and they also give thread-safety for free. Therefore, on the "small scale", i.e. when writing concrete code, it is recommended to follow the functional programming style.
+Design of the Scala language strongly favors the aforementioned functional programming practices. To make them easy to implement, Scala provides tools like case classes, pattern matching, type inference, lightweight closure syntax and powerful built-in collections library. Moreover, a major part of the standard Scala library is designed using functional idioms, and many of the popular community libraries follow suit.
 
 ### Immutability
 
-Immutability of the data is one of the cornerstones of the functional programming. It may sound very limiting to those who are accustomed to the conventional imperative languages like C/C++ or Java, but when immutability has proper support in the language, it allows writing much cleaner code with stronger invariants, and which is also thread-safe by default.
+Immutability of data is one of the cornerstones of the functional programming. It may sound very limiting to those who are accustomed to the conventional imperative languages like C/C++ or Java, but when immutability has proper support in the language, it allows writing much cleaner code with stronger invariants, and which is also thread-safe by default.
 
 Therefore, as a general rule, avoid creating objects with mutable state. In particular, algebraic data types (see the section below) must not have `var` members, as well as indirectly mutable things like mutable collections.
 
-Mutability on the method level, i.e. using local `var`s and mutable structures, should also be avoided as much as possible. There are times, however, when relying on mutability does make the code clearer and/or is required for performance reasons. In that case mutability must be isolated: the public interface must not expose the mutability used to implement it.
+Mutability on the method level, i.e. using local `var`s and mutable structures, should also be avoided as much as possible. There are times, however, when relying on mutability does make the code clearer and/or is required for performance reasons. In that case mutability should be isolated: the public interface should avoid exposing the mutability used to implement it.
 
 ### Algebraic data types
 
-Algebraic data types (ADTs for short), while may sound somewhat scary, are a very simple concept. ADTs are composite types, that is, they are types which combine other types in two simple ways.
+Algebraic data types (ADTs for short), while may sound somewhat scary, are a very simple concept. ADTs are the simplest composite types, that is, they are types which combine other types in two simple ways.
 
 First, an ADT may combine several values in a tuple:
 
@@ -1114,7 +1135,7 @@ case class SomeInt(value: Int) extends OptionalInt
 case object NoneInt extends OptionalInt
 ```
 
-Here `OptionalInt` is the ADT, and `SomeInt` and `NoneInt` are its variants. Each variant is a product ADT in itself. Such combinations of product types are called sum types, or sometimes disjoint unions. Another common example of such an ADT is a tree, which also demonstrates how an ADT can be recursive:
+Here `OptionalInt` is the ADT, and `SomeInt` and `NoneInt` are its variants. Each variant is a product ADT in itself. A value of type `OptionalInt` may be either an instance of `SomeInt` or `NoneInt`, and because the trait is sealed, it cannot be extended anywhere else except where it is defined, so there are no other possible values for it. Such combinations of product types are called *sum* types, or sometimes *disjoint unions*. Another common example of such an ADT is a tree, which also demonstrates how an ADT can be recursive:
 
 ```scala
 sealed trait Tree
@@ -1126,7 +1147,7 @@ object Tree {
 
 As can be seen above, in Scala sealed traits and case classes are used to create algebraic data types.
 
-ADTs are useful to model a wide range data structures, simple data type and state machines being the most prominent examples. Pattern matching together with the exhaustiveness analysis allow writing more correct code. Many algorithms on ADTs are naturally recursive, and pattern matching leads to very clear and correct code:
+ADTs are useful to model a wide range data structures, simple data types and state machines being the most prominent examples. Pattern matching together with the exhaustiveness analysis allow writing more correct code. Many algorithms on ADTs are naturally recursive, and pattern matching leads to very clear and correct code:
 
 ```scala
 def findMax(tree: Tree): Int = tree match {
@@ -1135,7 +1156,7 @@ def findMax(tree: Tree): Int = tree match {
 }
 ```
 
-Because of the exhaustiveness analysis, such pattern matches will make sure that you didn't forget to check any variants of an ADT.
+Because of the exhaustiveness analysis, such pattern matches will make sure that you didn't forget to check any variants of an ADT: if for some reason you didn't check a value of a sum type for one of its variants, it would be a compiler error.
 
 #### Sum types declarations
 
@@ -1176,7 +1197,17 @@ Just as with any other ADT, declare all enumeration constants inside the compani
 
 ### Options and `null`
 
-The easiest way to understand the `Option` type is to think of it as a container which may contain either one value of the given type or none. Absence of a value is an extremely common idiom, and in Java it is usually modeled with `null`. In Scala code, however, `Option`s should always be used for this purpose.
+The easiest way to understand the `Option` type is to think of it as a container which may contain either one value of the given type or none. `Option` is an ADT of a very simple structure:
+
+```scala
+sealed trait Option[+T]
+case class Some[+T](value: T) extends Option[T]
+case object None extends Option[Nothing]
+```
+
+Because `Option[T]` is covariant in `T` (as signified by the `+` sign), and `Nothing` is a subtype of any other type, `None` which extends `Option[Nothing]` can be used as a value for `Option[T]` for any `T`.
+
+Absence of a value is an extremely common idiom, and in Java it is usually modeled with `null`. In Scala code, however, `Option`s should always be used for this purpose.
 
 `Option`s returned by functions force you to check for the absence of value before using it. This can be done using pattern matching:
 
@@ -1225,7 +1256,7 @@ Scala is a powerful object-oriented language; if fact, it is even more pure than
 
 ### Dependency injection
 
-Dependency injection is wide range of practices related to how different parts of the program are combined together. Usually it boils down to how classes get instances of each other.
+Dependency injection is a wide range of practices related to how different parts of the program are combined together. Usually it boils down to how classes get instances of each other. In its simplest form dependency injection means passing dependencies of a class to this class from "outside", e.g. by passing their instances through the constructor. However, there are dependency injection frameworks which allows declarative description of the object graph.
 
 Compared to Java, manual dependency injection in Scala is much more convenient, because there is no need to manually create fields and declare constructors. Moreover, factories are naturally modeled using functions. Here are examples from the Twitter's Effective Scala, they display a perfectly valid approach to structuring the program:
 
@@ -1245,6 +1276,7 @@ class FilteredTweetCounter(mkStream: Filter => TweetStream) {
   mkStream(DMs).subscribe { tweet => dmCount += 1 }
 }
 ```
+
 
 ### Traits
 
@@ -1285,7 +1317,7 @@ trait ReadWriter {
 }
 ```
 
-(from the Twitter's Effective Scala)
+(adapted from the Twitter's Effective Scala)
 
 #### Traits with implementation
 
@@ -1364,7 +1396,7 @@ Moreover, using DSLs provided by third-party libraries is also forbidden, unless
 
 # Libraries
 
-Scala ecosystem contains vast amount of libraries virtually for any purpose, and since Scala is a JVM language, it can seamlessly interact with native Java libraries. However, we must be discreet in which libraries we choose. There are basically the following points which should be considered here:
+Scala ecosystem contains vast amount of libraries virtually for any purpose, and since Scala is a JVM language, it can seamlessly interact with native Java libraries, which increases the pool of libraries even further. However, we must be discreet in which libraries we choose. There are basically the following points which should be considered here:
 
 * Some libraries simply do not have high enough quality to be useful and reliable.
 * There are libraries which rely heavily on the most obscure features of the language; while these libraries may solve the corresponding problems in a very succinct way, very often they make the code which uses them very hard to read, especially for people who do not know that library.
@@ -1373,7 +1405,108 @@ Scala ecosystem contains vast amount of libraries virtually for any purpose, and
 
 One of the declared goals of this document is to keep the code base cleaner, approachable and maintainable. Virtually any relatively complex program uses tens of libraries directly and even more transitively. Therefore, we must choose which libraries we use and how we use them with utmost care, because their implementation and their API affect our own code greatly.
 
-## Collections (TODO)
+## Collections
+
+Scala has a very powerful collections library, which contains immutable, mutable and parallel collections for virtually any purpose. While its implementation is quite complex, and extending it may be hard and would require using complex language features like higher-kinded types and implicits, in the everyday work it is very easy to use. To use the collections library efficiently, it is highly recommended to read [the official overview](http://docs.scala-lang.org/overviews/collections/introduction.html) of the collections library first.
+
+### Overview
+
+Here is a diagram of the basic collection types, both mutable and immutable:
+
+**TODO (traversable, iterable, seq, set, map)**
+
+The base trait, `Traversable[T]`, represents something which can be internally iterated - it provides a `foreach(f: T => Unit)` method which calls its argument for every item contained in the collection. This trait is very general and it can describe not only regular collections like lists or sets, but also e.g. ephemeral streams of data.
+
+`Iterable[T]` is something which can be externally iterated - being quite similar to Java's `Iterable<T>`, it has one method, `def iterator: Iterator[T]`, which returns an iterator which can be used to walk over the collection. `foreach()` implementation for an `Iterable` is trivial, therefore it extends `Traversable`.
+
+`Seq`, `Set` and `Map` are base types for the respective "kinds" of collections. `Seq`s are collections whose items are laid out sequentially and therefore can be accessed using zero-based index. `Set`s are collections which cannot contain duplicate elements, and usually have effective membership check. `Map`s are collections of key-value pairs where keys are unique, and they usually have effective lookup by key.
+
+There is one weird quirk of the standard Scala library which should always be taken into account. `Map` and `Set`, when used in the regular code without any special imports, come from `scala.Predef` object (whose internals are imported into every Scala file automatically), and there they are declared as aliases to `scala.collection.immutable.*` types:
+
+```scala
+type Map = scala.collection.immutable.Map
+type Set = scala.collection.immutable.Set
+```
+
+On the other hand, the alias for `Seq` is declared in `scala` package object, and it points to the root `scala.collection.Seq` type:
+
+```scala
+type Seq = scala.collection.Seq
+```
+
+Therefore, without any extra imports, variables with `Seq` type can hold both mutable and immutable collections, while `Map` and `Set` can hold immutable collections only. This inconsistency is quite jarring, but there is no simple way around it, and one must only remember how things are. The consequence is that using `Seq` is discouraged, but using `Map` and `Set` is fine. 
+
+### Usage
+
+#### Collection constructors
+
+When creating new instances of collections, use the default constructor for collection types, unless you do need a specific collection type for some purpose (e.g. `TreeSet` for ordered iteration):
+
+```scala
+val set = Set(1, 2, 3)
+val map = Map("a" -> 1, "b" -> 2)
+```
+
+There is one exception from this rule: use `Vector` where possible to create instances of `Seq` type instead of the default `Seq` constructor:
+
+```scala
+val seq = Vector(1, 2, 3)
+```
+
+The rationale for this rule is that `Vector` collection is almost always preferable to `List`, and the `Seq` default constructor delegates to the `List` constructor.
+
+The reasons why `Vector` should be preferred are listed, for example, [here](http://stackoverflow.com/questions/6928327/when-should-i-choose-vector-in-scala). In short, `Vector` is faster than `List` for almost all operations and is more memory-efficient. Because it is a trie consisting of arrays, memory and cache locality are also better for `Vector`. Unless you're writing a "hot" algorithm which heavily depends on a list-like structure (prepending to the collection and accessing its head and tail), `Vector` would perform better than `List`, and therefore should always be used. It is also harder to accidentally index a sequence in an inefficient way whey `Vector`s are used instead of `List`s.
+
+And another reason for using concrete method is that the overall usage of `Seq` is discouraged (see the previous section).
+
+#### Collection types
+
+Use `Map`, `Set` and `Vector` as default types for returning values from functions, for storing values in ADTs and for variables and fields:
+
+```scala
+def createUsers(params: Whatever): Vector[User] = ...
+
+case class Application(parameters: Map[String, String])
+
+class SomethingDoer(parameters: Parameters) {
+  private val itemsCache: Set[Item] = computeItemsCache(parameters)
+  ...
+}
+```
+
+Of course, that is unless some specific collection type is necessary for its operations and/or semantics.
+
+Use the most general type available for parameters of a method:
+
+```scala
+def processItems(items: Traversable[Item]): Unit = ...
+
+def needsAMap(map: Map[String, Int]): Int = map.getOrElse("x", 0)
+```
+
+#### Mutable collections
+
+Always prefer immutable collections to mutable ones. Being immutable, they make it easier to reason about their usage, and they are also thread-safe by default. Mutable collections should be used only for performance reasons (if they are mutated frequently, they may be faster than immutable collections stored in a `var`) and for certain classes of algorithms which are clearer when are based on a mutable collection.
+
+If you decided to use a mutable collection, the `mutable` package name must always be imported and used instead of importing the collection name directly:
+
+```scala
+import scala.colleciton.mutable
+
+val items: mutable.Map[String, Int] = mutable.Map.empty
+```
+
+#### Interacting with Java collections
+
+Avoid using Java collections, unless they are needed for interfacing with Java code. In order to transform Scala collections to Java collections and back, use the implicit `asJava*` and `asScala*` methods imported from `scala.collection.convert.{decorateAs*}` objects:
+
+```scala
+import scala.collection.convert.decorateAsJava._
+
+someJavaMethodAcceptingList(Vector(1, 2, 3).asJava)
+```
+
+Never use `scala.collection.convert.wrapAs*` objects, as well as `scala.collection.JavaConversions`, which provide implicit conversions to Java classes, as opposed to decorators. `scala.collection.JavaConverters` is functionally equivalent to `scala.collection.convert.decorateAll`, but objects defined in `scala.collection.convert` package are more granular and convey the intention better, therefore avoid using `JavaConverters` in favor of `decorate*` objects.
 
 ## Concurrency (TODO)
 
@@ -1429,4 +1562,3 @@ If you notice the following language features and patterns in the submitted code
 * Recursion
 * Abstract `val` members
 * Using DSLs provided by third-party libraries (only in exceptional cases when it cannot be avoided)
-
