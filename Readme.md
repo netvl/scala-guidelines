@@ -2,7 +2,9 @@
 
 Scala language has lots of features over the baseline Java, and many of them provide a quite significant boost in readability and correctness of the code, as well as productivity of a developer. However, many of these features, and many libraries which are or are not based on these features require considerable experience to be used correctly and actually hinder readability of the code, especially for people who are unfamiliar with the concepts used in these libraries, with the code base, or with the whole JVM/Java/Scala ecosystem in general.
 
-The intention of this document is to provide a general overview of Scala usage practices which should be employed to keep the code base approachable, understandable and maintainable, while not hindering the developers productivity. Note that some of these practices are enforced automatically with the code style analyzers and linters, and therefore their violation will result in a failed build. Most, however, are enforced through the code review process. Therefore, it is absolutely necessary for the reviewers to understand this document by heart and apply it rigorously. To help with this task, a dedicated section at the end of the document serves as a handbook for reviewers, providing a list of most important things to look for during the code review.
+The intention of this document is to provide a general overview of Scala usage practices which should be employed to keep the code base approachable, understandable and maintainable, while not hindering the developers productivity. These practices are also intended to allow new developers to get accustomed with the existing code more easily, and to make sure that they do not need to have significant background in mathematics or functional programming languages in order to start to hack on the code quickly.
+
+Some of these practices are enforced automatically with the code style analyzers and linters, and therefore their violation will result in a failed build. Most, however, are enforced through the code review process. Therefore, it is absolutely necessary for the reviewers to understand this document by heart and apply it rigorously. To help with this task, a dedicated section at the end of the document serves as a handbook for reviewers, providing a list of most important things to look for during the code review.
 
 This document is heavily based on the following existing Scala guidelines:
 
@@ -1559,9 +1561,19 @@ val itemIds: Set[String] = ...
 val items: Set[Item] = itemIds.flatMap(itemsDao.findById)
 ```
 
-## Concurrency (TODO)
+## Concurrency
 
-## Third-party libraries (TODO)
+Concurrency is a very complex topic, and is one of the most common source of bugs. JVM in general and Scala in particular provide lots of tools, libraries and frameworks which help working with concurrency and abstract away the low-level details of thread management, but introduce another level of semantics which should also be understood by the developer in order not to make more bugs. Therefore, choosing the particular tool should be done judiciously.
+
+Instead of rephrasing the same things in different words, we suggest reading [the relevant chapter](https://github.com/alexandru/scala-best-practices/blob/master/sections/4-concurrency-parallelism.md) of the Scala Best Practices document. Consider its items to be fully applied by this document as well.
+
+## Other Scala libraries (TODO)
+
+Scala ecosystem contains lots of libraries which often provide very convenient and powerful tools to solve various tasks, but at the same time they are often based on rather obscure concepts from the mathematical foundations of the programming (like category theory or abstract algebra) or are otherwise complex to understand.
+
+One of the explicit goals of the document is to allow as much developers as possible to work with the code without previous knowledge of abstract mathematical concepts. Unfortunately, many popular libraries in Scala community are explicitly based on these concepts. Moreover, these libraries still provide convenient tools (like `Validation` or `Xor/Ior` types) which are used ubiquitously in the Scala community and are actually very simple to understand, but still integrated with the rest of the complex math-based machinery these libraries contain. Therefore, we must be very careful to decide what we would like to use in our code and what we would like to avoid entirely.
+
+## Java libraries (TODO)
 
 # Reference for code reviewers (TODO)
 
@@ -1573,7 +1585,7 @@ Remember, the main intention of this guide is to increase the readability and ma
 
 ## Forbidden (TODO)
 
-The following language features and patterns are forbidden to be used in any case. Do not accept the patch if it contains any of them. Some of these items are automatically checked for by build system tools.
+The following language features and patterns are forbidden to be used in any case. Do not accept a patch if it contains any of them. Some of these items are automatically checked for by build system tools.
 
 * Implicit conversions
 * Structural typing
