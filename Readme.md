@@ -1508,6 +1508,57 @@ someJavaMethodAcceptingList(Vector(1, 2, 3).asJava)
 
 Never use `scala.collection.convert.wrapAs*` objects, as well as `scala.collection.JavaConversions`, which provide implicit conversions to Java classes, as opposed to decorators. `scala.collection.JavaConverters` is functionally equivalent to `scala.collection.convert.decorateAll`, but objects defined in `scala.collection.convert` package are more granular and convey the intention better, therefore avoid using `JavaConverters` in favor of `decorate*` objects.
 
+#### Transformations and iterators
+
+When you're chaining more than one collection operation, or when you're transforming an original collection type (e.g. a set of identifiers) to another collection type (e.g. a map of identifiers to the things they identify), it is recommended to transform the collection to an iterator first and then do all transformations on the iterator instead of the original collection, and then collect the resulting iterator to the final collection:
+
+```scala
+val itemIds: Set[String] = ...
+
+val itemsIterator = itemIds.iterator.flatMap(itemsDao.findById)
+val itemsByName = items.map(item => item.name -> item).toMap
+```
+
+The reason for this recommendation is that all transformations on collections create intermediate collections as their results:
+
+```scala
+val items = itemsIds.flatMap(itemsDao.findById)  // items: Set[Item]
+val itemsByName = items
+  .map(item => item.name -> item)  // <temporary>: Set[(String, Item)]
+  .toMap
+```
+
+When transformations are done on iterators, no intermediate collections are created, and the chain of transformations of iterators is done lazily. Operations like `toMap/toSet/toVector` or `fold/reduce` eagerly consume the iterator, creating the final collection in one go.
+
+Note that not all operations are available on iterators, like `groupBy`. Also, if you need to reuse the intermediate result multiple times, be sure to collect it to a concrete collection first, because iterators can only be used once:
+
+```scala
+val items = itemIds.iterator.flatMap(itemsDao.findById).toVector
+val itemsByName = items.iterator.map(item => item.name -> item).toMap
+val itemsById = items.iterator.map(item => item.id -> item).toMap
+```
+
+If you're using `for` comprehensions, you can convert various types, e.g. `Option`s, to iterators to make sure that all types are uniform and there is no funny behavior e.g. with maps or sets (where because of the uniqueness constraint of elements it is possible for mapped elements to be dropped silently). The above examples are actually better written as a `for` comprehension:
+
+```scala
+val itemsByNameIterator = for {
+  itemId <- itemIds.iterator
+  item <- itemsDao.findById(itemId).iterator
+} yield item.name -> item
+val itemsByName = itemsByNameIterator.toMap
+```
+
+When you assign iterators to variables, name the variables with `Iterator` suffix to distinguish them from regular collections.
+
+An alternative to iterators would be using collection views, which are essentially reusable iterators. However, views in Scala implement the same interfaces as regular collections, and therefore it is easy to store e.g. `MapView` as a `Map`. This is bad, because transformations applied to views are not executed eagerly, they are delayed until elements of the view are accessed, just like with iterators. When such a view is stored in a frequently used variable, all these transformations will be recomputed each time when elements of the view are accessed.
+
+If you're doing only a single transformation operation, and you need to get a collection of the same type as the original collection, omit the iterator conversion because the necessary type will be constructed automatically:
+
+```scala
+val itemIds: Set[String] = ...
+val items: Set[Item] = itemIds.flatMap(itemsDao.findById)
+```
+
 ## Concurrency (TODO)
 
 ## Third-party libraries (TODO)
