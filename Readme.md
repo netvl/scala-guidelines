@@ -1033,8 +1033,6 @@ val joinedPayloadByInterface = allPayloadsByInterface
 
 This way the intention of the code is very clear even to a relatively casual reader.
 
-# Concurrency (TODO)
-
 # Patterns and architecture
 
 Scala is a multi-paradigm language, combining elements from functional and object-oriented programming. However, this is dangerous combination which may result in a very obscure code, if patterns and features from both paradigms are used indiscriminately.
@@ -1279,7 +1277,6 @@ class FilteredTweetCounter(mkStream: Filter => TweetStream) {
 }
 ```
 
-
 ### Traits
 
 Traits in Scala are very versatile and are used for many purposes. One of the roles of traits in Scala are Java-like interfaces, i.e. statically defined contracts which are extended by other classes which are intended to provide these contracts. Another role are mixins, which are a way to combine pieces of common functionality. Even another role, as can be seen from the section on ADTs, is to serve as a marker type for sum data types.
@@ -1390,11 +1387,11 @@ Scala is a very DSL-friendly language, because of certain features which make wr
 * infix method calls;
 * implicits.
 
-DSLs may be immensely expressive and compress huge amounts of meaning in a few lines of code. And precisely because of this reason they tend to be impenetrable for a reader who does not know these DSLs in advance.
+DSLs may be immensely expressive and compress huge amounts of meaning into a few lines of code. And precisely because of this reason they tend to be impenetrable for a reader who does not know these DSLs in advance.
 
 Therefore, it is strictly forbidden to create custom domain-specific languages, even if they do increase readability locally. Domain-specific language implementations are hard to maintain, and they make difficult for new developers to dive into the code base. Prefer less fancy solutions for the problems at hand.
 
-Moreover, using DSLs provided by third-party libraries is also forbidden, unless these libraries are very important to make the work done (e.g. if they are a transitive dependency of some framework) or are the only ones which provide the necessary functionality. First, try to avoid using the DSL, if the library provides the same functionality without it. If it is not possible, and using a DSL is unavoidable, explain everything which is not clear at the first glance thoroughly in comments.
+Moreover, using DSLs provided by third-party libraries should also be avoided, unless these libraries are very important to make the work done (e.g. if they are a transitive dependency of some framework) or are the only ones which provide the necessary functionality. First, try to avoid using the DSL, if the library provides the same functionality without it. If it is not possible, and using a DSL is unavoidable, explain everything which is not clear at the first glance thoroughly in comments.
 
 # Libraries
 
@@ -1436,7 +1433,7 @@ On the other hand, the alias for `Seq` is declared in `scala` package object, an
 type Seq = scala.collection.Seq
 ```
 
-Therefore, without any extra imports, variables with `Seq` type can hold both mutable and immutable collections, while `Map` and `Set` can hold immutable collections only. This inconsistency is quite jarring, but there is no simple way around it, and one must only remember how things are. The consequence is that using `Seq` is discouraged, but using `Map` and `Set` is fine. 
+Therefore, without any extra imports, variables with `Seq` type can hold both mutable and immutable collections, while `Map` and `Set` can hold immutable collections only. This inconsistency is quite jarring, but there is no simple way around it, and one must only remember how things are. The consequence is that using `Seq` is discouraged, but using `Map` and `Set` is fine.
 
 ### Usage
 
@@ -1457,9 +1454,19 @@ val seq = Vector(1, 2, 3)
 
 The rationale for this rule is that `Vector` collection is almost always preferable to `List`, and the `Seq` default constructor delegates to the `List` constructor.
 
-The reasons why `Vector` should be preferred are listed, for example, [here](http://stackoverflow.com/questions/6928327/when-should-i-choose-vector-in-scala). In short, `Vector` is faster than `List` for almost all operations and is more memory-efficient. Because it is a trie consisting of arrays, memory and cache locality are also better for `Vector`. Unless you're writing a "hot" algorithm which heavily depends on a list-like structure (prepending to the collection and accessing its head and tail), `Vector` would perform better than `List`, and therefore should always be used. It is also harder to accidentally index a sequence in an inefficient way whey `Vector`s are used instead of `List`s.
+The reasons why `Vector` should be preferred are listed, for example, [here](http://stackoverflow.com/questions/6928327/when-should-i-choose-vector-in-scala). In short, `Vector` is faster than `List` for almost all operations and is more memory-efficient. Because it is a trie consisting of arrays, memory and cache locality are also better for `Vector`. Unless you're writing a "hot" algorithm which heavily depends on a list-like structure (prepending to a collection and accessing its head and tail), `Vector` would perform better than `List`, and therefore should always be used. It is also harder to accidentally index a sequence in an inefficient way whey `Vector`s are used instead of `List`s.
 
 And another reason for using concrete method is that the overall usage of `Seq` is discouraged (see the previous section).
+
+Use `Collection.empty` to create empty instances of collections instead of `Collection()`:
+
+```scala
+var cache: Map[String, Item] = Map.empty  // not Map()
+
+var queue: Vector[Item] = Vector.empty  // not Vector()
+```
+
+Using the explicit `.empty` method helps readability, since with it you're stating that you need an empty collection explicitly.
 
 #### Collection types
 
@@ -1483,6 +1490,9 @@ Use the most general type available for parameters of a method:
 ```scala
 def processItems(items: Traversable[Item]): Unit = ...
 
+def transformItems(items: Iterable[Item]): Vector[Item] =
+  items.iterator.filter(_.someCondition).map(transform).toVector
+
 def needsAMap(map: Map[String, Int]): Int = map.getOrElse("x", 0)
 ```
 
@@ -1497,6 +1507,8 @@ import scala.colleciton.mutable
 
 val items: mutable.Map[String, Int] = mutable.Map.empty
 ```
+
+If you use IntelliJ IDEA, it enforces this style for mutable collections.
 
 #### Interacting with Java collections
 
@@ -1567,13 +1579,23 @@ Concurrency is a very complex topic, and is one of the most common source of bug
 
 Instead of rephrasing the same things in different words, we suggest reading [the relevant chapter](https://github.com/alexandru/scala-best-practices/blob/master/sections/4-concurrency-parallelism.md) of the Scala Best Practices document. Consider its items to be fully applied by this document as well.
 
-## Other Scala libraries (TODO)
+## Other Scala libraries
 
 Scala ecosystem contains lots of libraries which often provide very convenient and powerful tools to solve various tasks, but at the same time they are often based on rather obscure concepts from the mathematical foundations of the programming (like category theory or abstract algebra) or are otherwise complex to understand.
 
 One of the explicit goals of the document is to allow as much developers as possible to work with the code without previous knowledge of abstract mathematical concepts. Unfortunately, many popular libraries in Scala community are explicitly based on these concepts. Moreover, these libraries still provide convenient tools (like `Validation` or `Xor/Ior` types) which are used ubiquitously in the Scala community and are actually very simple to understand, but still integrated with the rest of the complex math-based machinery these libraries contain. Therefore, we must be very careful to decide what we would like to use in our code and what we would like to avoid entirely.
 
-## Java libraries (TODO)
+In general, it is recommended to avoid libraries which provide complex DSLs, as well as libraries which introduce and/or are based on complex concepts, like Scalaz (which, accidentally, also uses lots of symbolic identifiers). These libraries *are* helpful, and they *do* solve important problems, but when they are overused (and they do tend to be overused), they raise the complexity of the code, sometimes quite significantly, and they make introducing new people to the project harder, because they often require from the reader the knowledge of abstract concepts, e.g. from algebra or category theory.
+
+## Java libraries
+
+Scala runs on JVM, which gives an enormous advantage of having access to the whole JVM ecosystem, including all existing Java libraries. However, many of these libraries use Java-specific idioms, which often go against Scala idioms.
+
+One of the most important thing when working with Java code is to take `null`-safety into account. Lots of Java libraries either accept null values or return them, either intentionally (for example, `java.util.Map` has it as a part of its API) or not (because of the programmer's negligence). Idiomatic Scala code does not use `null`s (and actually in these guidelines using `null` is expressly forbidden), therefore they should always be handled in the boundary code between the Scala codebase and Java library, for example, by wrapping a value with a possible `null` to an `Option`. Remember, `Option.apply` method (usually written in a functional notation like `Option(someValue)`) checks its argument for null and returns `None` if it is actually a `null`.
+
+Another point is exception-safety. Lots of Java libraries signal errors through exceptions. The idiomatic Scala way is to encapsulate errors which should be handled by the user to an ADT like `Either` or `Try`, therefore, always consider which exceptions a Java library method throws and think if these exceptions are better represented as error values in Scala code. The general rule to follow here is that if these exceptions signify a programmer error, like passing an invalid value for an argument, it is fine not to catch them, but if these exceptions affect the business logic and are likely to happen during the normal flow, they should be caught and transformed to values.
+
+And finally, try to prevent Java libraries from "creeping" into the code base. That is, create idiomatic Scala wrappers around these libraries (or better yet, find an already existing wrapper) which encapsulate all Java-specific quirks and provide an idiomatic Scala API instead of using these libraries everywhere in your code.
 
 # Reference for code reviewers (TODO)
 
