@@ -1566,6 +1566,10 @@ When you assign iterators to variables, name the variables with `Iterator` suffi
 
 An alternative to iterators would be using collection views, which are essentially reusable iterators. However, views in Scala implement the same interfaces as regular collections, and therefore it is easy to store e.g. `MapView` as a `Map`. This is bad, because transformations applied to views are not executed eagerly, they are delayed until elements of the view are accessed, just like with iterators. When such a view is stored in a frequently used variable, all these transformations will be recomputed each time when elements of the view are accessed.
 
+Using views may sometimes be beneficial (e.g. when you want to keep the concrete type of a collection after a sequence of transformations), but it is very easy to forget to call `.force` on the view object to go back to a non-ephemeral collection, so they should be used with care. Never return views from functions, and never store views into other objects; they must be used only for temporary transformations. If you need to create a reusable part of a transformation chain, create a function which returns `Iterator` instead.
+
+Another thing to be aware of with regard to views is that some of the convenient collection methods like `.mapValues` on a map actually return views instead of doing transformations, however, such views do not actually implement the view traits and therefore they do not have a `.force` method. **TODO: add a list of such methods here**
+
 If you're doing only a single transformation operation, and you need to get a collection of the same type as the original collection, omit the iterator conversion because the necessary type will be constructed automatically:
 
 ```scala
@@ -1627,6 +1631,7 @@ The following language features and patterns are forbidden to be used in any cas
 * `var` or `lazy val` as abstract members
 * Defining custom DSLs
 * `null` (except for interaction with badly written Java libraries)
+* Returning collection views from functions and storing them in other objects
 
 ## Suspicious (TODO)
 
