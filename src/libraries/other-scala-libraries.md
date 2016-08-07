@@ -1,0 +1,8 @@
+# Other Scala libraries
+
+Scala ecosystem contains lots of libraries which often provide very convenient and powerful tools to solve various tasks, but at the same time they are often based on rather obscure concepts from the mathematical foundations of the programming (like category theory or abstract algebra) or are otherwise complex to understand.
+
+One of the explicit goals of the document is to allow as much developers as possible to work with the code without previous knowledge of abstract mathematical concepts. Unfortunately, many popular libraries in Scala community are explicitly based on these concepts. Moreover, these libraries still provide convenient tools (like `Validation` or `Xor/Ior` types) which are used ubiquitously in the Scala community and are actually very simple to understand, but still integrated with the rest of the complex math-based machinery these libraries contain. Therefore, we must be very careful to decide what we would like to use in our code and what we would like to avoid entirely.
+
+In general, it is recommended to avoid libraries which provide complex DSLs, as well as libraries which introduce and/or are based on complex concepts, like Scalaz (which, accidentally, also uses lots of symbolic identifiers). These libraries *are* helpful, and they *do* solve important problems, but when they are overused (and they do tend to be overused), they raise the complexity of the code, sometimes quite significantly, and they make introducing new people to the project harder, because they often require from the reader the knowledge of abstract concepts, e.g. from algebra or category theory.
+

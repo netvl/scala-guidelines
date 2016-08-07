@@ -1,0 +1,9 @@
+# Patterns and architecture
+
+Scala is a multi-paradigm language, combining elements from functional and object-oriented programming. However, this is dangerous combination which may result in a very obscure code, if patterns and features from both paradigms are used indiscriminately.
+
+As a general rule, object-oriented patterns should be used to model the high-level architecture of the program, while functional patterns should be used locally, to write the actual implementation code. Think of object-oriented design as a strategy, and of functional patterns as tactics: apply the commonly known object-oriented patterns when it is necessary to structure the overall program structure, and use functional idioms when you're writing concrete code which manipulates concrete data. For example, don't hesitate to use patterns like facade or adapter when you're designing your class structure, but when you actually begin to fill these classes with implementation, use functional patterns like immutability, optional values and operations on collections instead of what you would do in Java, like imperative loops and mutable collections.
+
+Of course, it is sometimes difficult to make a clean separation, for example, relying on immutability leads to creation of many ADTs, which definitely affect the high-level structure of the program, and vice versa, using dependency injection patterns have very noticeable effect on the concrete implementation. But this approach allows ruling out harmful practices like using high-level functional idioms to structure the overall program (e.g. trying to design the entire program workflow as a monad transformer stack) or blindly using object-oriented patterns to structure low level code (e.g. using virtual dispatch with a trait hierarchy where a simple match would do nicely).
+
+
