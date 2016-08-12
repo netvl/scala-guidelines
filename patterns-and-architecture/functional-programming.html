@@ -1,0 +1,211 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <base href="../">
+
+        <link rel="stylesheet" href="book.css">
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+        <link rel="shortcut icon" href="favicon.png">
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+
+        <!-- MathJax -->
+        <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Fetch JQuery from CDN but have a local fallback -->
+        <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+        <script>
+            if (typeof jQuery == 'undefined') {
+                document.write(unescape("%3Cscript src='jquery.js'%3E%3C/script%3E"));
+            }
+        </script>
+    </head>
+    <body class="light">
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme = localStorage.getItem('theme');
+            if (theme == null) { theme = 'light'; }
+            $('body').removeClass().addClass(theme);
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var sidebar = localStorage.getItem('sidebar');
+            if (sidebar === "hidden") { $("html").addClass("sidebar-hidden") }
+            else if (sidebar === "visible") { $("html").addClass("sidebar-visible") }
+        </script>
+
+        <div id="sidebar" class="sidebar">
+            <ul class="chapter"><li class="affix"><a href="./introduction.html">Introduction</a></li><li><a href="./reference.html"><strong>1.</strong> Reference for code reviewers</a></li><li><a href="./code-style/main.html"><strong>2.</strong> General code style</a></li><li><ul class="section"><li><a href="./code-style/formatting-and-whitespace.html"><strong>2.1.</strong> Formatting and whitespace</a></li><li><a href="./code-style/naming.html"><strong>2.2.</strong> Naming</a></li><li><a href="./code-style/imports.html"><strong>2.3.</strong> Imports</a></li><li><a href="./code-style/braces.html"><strong>2.4.</strong> Braces</a></li><li><a href="./code-style/comments.html"><strong>2.5.</strong> Comments</a></li></ul></li><li><a href="./type-system/main.html"><strong>3.</strong> Type system</a></li><li><ul class="section"><li><a href="./type-system/return-type-annotations.html"><strong>3.1.</strong> Return type annotations</a></li><li><a href="./type-system/structural-typing.html"><strong>3.2.</strong> Structural typing</a></li><li><a href="./type-system/generics-and-variance.html"><strong>3.3.</strong> Generics and variance</a></li><li><a href="./type-system/higher-kinded-types.html"><strong>3.4.</strong> Higher-kinded types</a></li><li><a href="./type-system/abstract-types.html"><strong>3.5.</strong> Abstract types</a></li><li><a href="./type-system/path-dependent-types.html"><strong>3.6.</strong> Path-dependent types</a></li><li><a href="./type-system/type-aliases.html"><strong>3.7.</strong> Type aliases</a></li><li><a href="./type-system/any-anyref-and-anyval.html"><strong>3.8.</strong> Any, AnyRef and AnyVal</a></li><li><a href="./type-system/isinstanceof-asinstanceof.html"><strong>3.9.</strong> isInstanceOf, asInstanceOf</a></li></ul></li><li><a href="./language-features/main.html"><strong>4.</strong> Language features</a></li><li><ul class="section"><li><a href="./language-features/implicits.html"><strong>4.1.</strong> Implicits</a></li><li><a href="./language-features/override-modifier.html"><strong>4.2.</strong> override modifier</a></li><li><a href="./language-features/abstract-override-modifier.html"><strong>4.3.</strong> abstract override modifier</a></li><li><a href="./language-features/pattern-matching.html"><strong>4.4.</strong> Pattern matching</a></li><li><a href="./language-features/multiple-parameter-lists.html"><strong>4.5.</strong> Multiple parameter list</a></li><li><a href="./language-features/symbolic-methods-and-infix-and-postfix-notation.html"><strong>4.6.</strong> Symbolic methods and infix and postfix notation</a></li><li><a href="./language-features/apply-method-on-classes.html"><strong>4.7.</strong> Apply method on classes</a></li><li><a href="./language-features/call-by-name.html"><strong>4.8.</strong> Call by name</a></li><li><a href="./language-features/return-statements.html"><strong>4.9.</strong> Return statements</a></li><li><a href="./language-features/macros.html"><strong>4.10.</strong> Macros</a></li><li><a href="./language-features/exception-handling.html"><strong>4.11.</strong> Exception handling</a></li><li><a href="./language-features/operation-chains.html"><strong>4.12.</strong> Operation chains</a></li><li><a href="./language-features/operations-nesting-and-for-comprehensions.html"><strong>4.13.</strong> Operations nesting and for comprehensions</a></li><li><a href="./language-features/string-interpolation.html"><strong>4.14.</strong> String interpolation</a></li><li><a href="./language-features/tuples.html"><strong>4.15.</strong> Tuples</a></li></ul></li><li><a href="./patterns-and-architecture/main.html"><strong>5.</strong> Patterns and architecture</a></li><li><ul class="section"><li><a href="./patterns-and-architecture/cake-pattern.html"><strong>5.1.</strong> Cake pattern</a></li><li><a href="./patterns-and-architecture/type-classes.html"><strong>5.2.</strong> Type classes</a></li><li><a href="./patterns-and-architecture/error-handling.html"><strong>5.3.</strong> Error handling</a></li><li><a href="./patterns-and-architecture/functional-programming.html" class="active"><strong>5.4.</strong> Functional programming</a></li><li><a href="./patterns-and-architecture/object-oriented-programming.html"><strong>5.5.</strong> Object-oriented programming</a></li><li><a href="./patterns-and-architecture/domain-specific-languages.html"><strong>5.6.</strong> Domain-specific languages</a></li></ul></li><li><a href="./libraries/main.html"><strong>6.</strong> Libraries</a></li><li><ul class="section"><li><a href="./libraries/collections.html"><strong>6.1.</strong> Collections</a></li><li><a href="./libraries/concurrency.html"><strong>6.2.</strong> Concurrency</a></li><li><a href="./libraries/other-scala-libraries.html"><strong>6.3.</strong> Other Scala libraries</a></li><li><a href="./libraries/java-libraries.html"><strong>6.4.</strong> Java libraries</a></li></ul></li></ul>
+        </div>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar" class="menu-bar">
+                    <div class="left-buttons">
+                        <i id="sidebar-toggle" class="fa fa-bars"></i>
+                        <i id="theme-toggle" class="fa fa-paint-brush"></i>
+                    </div>
+
+                    <h1 class="menu-title"></h1>
+
+                    <div class="right-buttons">
+                        <i id="print-button" class="fa fa-print" title="Print this book"></i>
+                    </div>
+                </div>
+
+                <div id="content" class="content">
+                    <h1>Functional programming</h1>
+<p>Functional programming can loosely be defined as a paradigm which treats computation as a sequence of evaluations of mathematical functions. This implies that it places emphasis on avoiding mutable state and side effects and is heavily based around returning and combining expressions. Among language features usually associated with functional programming are first-class functions, immutability of data, lack of side effects (pure and referentially transparent functions), recursive computations instead of imperative loops, and so on.</p>
+<p>Design of the Scala language strongly favors the aforementioned functional programming practices. To make them easy to implement, Scala provides tools like case classes, pattern matching, type inference, lightweight closure syntax and powerful built-in collections library. Moreover, a major part of the standard Scala library is designed using functional idioms, and many of the popular community libraries follow suit.</p>
+<h2>Immutability</h2>
+<p>Immutability of data is one of the cornerstones of the functional programming. It may sound very limiting to those who are accustomed to the conventional imperative languages like C/C++ or Java, but when immutability has proper support in the language, it allows writing much cleaner code with stronger invariants, and which is also thread-safe by default.</p>
+<p>Therefore, as a general rule, avoid creating objects with mutable state. In particular, algebraic data types (see the section below) must not have <code>var</code> members, as well as indirectly mutable things like mutable collections.</p>
+<p>Mutability on the method level, i.e. using local <code>var</code>s and mutable structures, should also be avoided as much as possible. There are times, however, when relying on mutability does make the code clearer and/or is required for performance reasons. In that case mutability should be isolated: the public interface should avoid exposing the mutability used to implement it.</p>
+<h2>Algebraic data types</h2>
+<p>Algebraic data types (ADTs for short), while may sound somewhat scary, are a very simple concept. ADTs are the simplest composite types, that is, they are types which combine other types in two simple ways.</p>
+<p>First, an ADT may combine several values in a tuple:</p>
+<pre><code class="language-scala">case class User(name: String, password: String)
+</code></pre>
+<p><code>User</code> is a simple <em>product</em> ADT: an instance of <code>User</code> is fully defined by its <code>name</code> and <code>password</code> fields. The simplest possible product is a nullary product which contain no fields; it is just a single value:</p>
+<pre><code class="language-scala">case object EmptyList
+</code></pre>
+<p>Second, an ADT may combine several mutually exclusive variants of products:</p>
+<pre><code class="language-scala">sealed trait OptionalInt
+case class SomeInt(value: Int) extends OptionalInt
+case object NoneInt extends OptionalInt
+</code></pre>
+<p>Here <code>OptionalInt</code> is the ADT, and <code>SomeInt</code> and <code>NoneInt</code> are its variants. Each variant is a product ADT in itself. A value of type <code>OptionalInt</code> may be either an instance of <code>SomeInt</code> or <code>NoneInt</code>, and because the trait is sealed, it cannot be extended anywhere else except where it is defined, so there are no other possible values for it. Such combinations of product types are called <em>sum</em> types, or sometimes <em>disjoint unions</em>. Another common example of such an ADT is a tree, which also demonstrates how an ADT can be recursive:</p>
+<pre><code class="language-scala">sealed trait Tree
+object Tree {
+  case class Node(left: Tree, right: Tree) extends Tree
+  case class Leaf(value: Int) extends Tree
+}
+</code></pre>
+<p>As can be seen above, in Scala sealed traits and case classes are used to create algebraic data types.</p>
+<p>ADTs are useful to model a wide range data structures, simple data types and state machines being the most prominent examples. Pattern matching together with the exhaustiveness analysis allow writing more correct code. Many algorithms on ADTs are naturally recursive, and pattern matching leads to very clear and correct code:</p>
+<pre><code class="language-scala">def findMax(tree: Tree): Int = tree match {
+  case Tree.Node(left, right) =&gt; Vector(findMax(left), findMax(right)).max
+  case Tree.Leaf(value) =&gt; value
+}
+</code></pre>
+<p>Because of the exhaustiveness analysis, such pattern matches will make sure that you didn't forget to check any variants of an ADT: if for some reason you didn't check a value of a sum type for one of its variants, it would be a compiler error.</p>
+<h3>Sum types declarations</h3>
+<p>If you need to write a sum data type, declare all its variants inside the companion object of the root sealed trait:</p>
+<pre><code class="language-scala">// write this
+sealed trait IntList
+object IntList {
+  case class Cons(value: Int, rest: IntList) extends IntList
+  case object Empty extends IntList
+}
+
+// not this
+sealed trait IntList
+case class IntListCons(value: Int, rest: IntList) extends IntList
+case object IntListEmpty extends IntList
+</code></pre>
+<p>Putting variants of a sum type into the companion object reduces the namespace pollution, allows to use nicer names for variants and makes the code which uses these names clearer because it becomes visible to which type these variants belong.</p>
+<h3>Enumerations</h3>
+<p>One important case of sum ADTs are enumerations, i.e. a fixed small set of values (objects). Lots of things are modeled with enumerations, for example, state of some system:</p>
+<pre><code class="language-scala">sealed trait State
+object State {
+  case object Stopped extends State
+  case object Started extends State
+  case object Failed extends State
+}
+</code></pre>
+<p>So, when you need to declare something which would be an <code>enum</code> in Java, use the above pattern.</p>
+<p>Just as with any other ADT, declare all enumeration constants inside the companion object of the respective sealed trait. Do not use <code>scala.Enumeration</code> because it has very unnatural API.</p>
+<h2>Options and <code>null</code></h2>
+<p>The easiest way to understand the <code>Option</code> type is to think of it as a container which may contain either one value of the given type or none. <code>Option</code> is an ADT of a very simple structure:</p>
+<pre><code class="language-scala">sealed trait Option[+T]
+case class Some[+T](value: T) extends Option[T]
+case object None extends Option[Nothing]
+</code></pre>
+<p>Because <code>Option[T]</code> is covariant in <code>T</code> (as signified by the <code>+</code> sign), and <code>Nothing</code> is a subtype of any other type, <code>None</code> which extends <code>Option[Nothing]</code> can be used as a value for <code>Option[T]</code> for any <code>T</code>.</p>
+<p>Absence of a value is an extremely common idiom, and in Java it is usually modeled with <code>null</code>. In Scala code, however, <code>Option</code>s should always be used for this purpose.</p>
+<p><code>Option</code>s returned by functions force you to check for the absence of value before using it. This can be done using pattern matching:</p>
+<pre><code class="language-scala">val v: Vector[Int] = ...
+v.find(_ &gt; 0) match {
+  case Some(n) =&gt; println(&quot;$n is positive&quot;)
+  case None =&gt; println(&quot;No positive values&quot;)
+}
+</code></pre>
+<p>Moreover, <code>Option</code> has several methods which make working with possibly absent values easier:</p>
+<pre><code class="language-scala">// when we only need to handle the &quot;value is present&quot; case
+v.find(_ &gt; 0).foreach { n =&gt;
+  println(&quot;$n is positive&quot;)
+}
+
+// when we need to return a default value in case
+// the computed value is absent
+val n = v.find(_ &gt; 0).getOrElse(0)
+</code></pre>
+<p>When interfacing with Java code, all values coming from the Java side must be checked for <code>null</code>s if it is not stated explicitly that no <code>null</code> values are possible. <code>Option.apply</code> methods accepts a nullable value and returns an <code>Option</code> which will be <code>None</code> if the passed value is actually <code>null</code>:</p>
+<pre><code class="language-scala">Option(javaClass.getResourceAsStream(&quot;some_file&quot;))
+</code></pre>
+<p>Do not call <code>get</code> on optional values except when you're absolutely sure that the optional value is always non-empty. Often such code may be rewritten more clearly using pattern matching or other optional combinators.</p>
+<h2>Recursion</h2>
+<p>Recursion is often very natural for certain algorithms, especially on recursive structures like trees and lists. In many cases, however, recursion tends to make the code obscure.</p>
+<p>Always try to solve the problem without explicit recursion first. Scala collections library provides lots of combinators which make explicit recursive traversals unnecessary in many cases.</p>
+<p>If a problem cannot be solved with pre-defined, combinators, compare the imperative version using loops and recursion first. In many cases, especially when the logic is not very large, imperative implementation may be simpler than recursion. In other cases, recursion would be clearer.</p>
+<p>When writing recursive functions, try to write them in a tail-recursive way, enforced by the <code>@tailrec</code> annotation. Tail-recursive functions will be optimized by the compiler into an imperative loop. However, tail-recursive functions may require passing lots of state in an accumulator parameter. Sometimes rewriting such functions using imperative loops may make the code nicer.</p>
+
+                </div>
+
+                <!-- Mobile navigation buttons -->
+                
+                    <a href="./patterns-and-architecture/error-handling.html" class="mobile-nav-chapters previous">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="./patterns-and-architecture/object-oriented-programming.html" class="mobile-nav-chapters next">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+
+            </div>
+
+            
+                <a href="./patterns-and-architecture/error-handling.html" class="nav-chapters previous" title="You can navigate through the chapters using the arrow keys">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+            
+
+            
+                <a href="./patterns-and-architecture/object-oriented-programming.html" class="nav-chapters next" title="You can navigate through the chapters using the arrow keys">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            
+
+        </div>
+
+
+        <!-- Local fallback for Font Awesome -->
+        <script>
+            if ($(".fa").css("font-family") !== "FontAwesome") {
+                $('<link rel="stylesheet" type="text/css" href="_FontAwesome/css/font-awesome.css">').prependTo('head');
+            }
+        </script>
+
+        <!-- Livereload script (if served using the cli tool) -->
+        
+
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+    </body>
+</html>

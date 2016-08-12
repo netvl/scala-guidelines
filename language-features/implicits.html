@@ -1,0 +1,177 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <base href="../">
+
+        <link rel="stylesheet" href="book.css">
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+        <link rel="shortcut icon" href="favicon.png">
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+
+        <!-- MathJax -->
+        <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Fetch JQuery from CDN but have a local fallback -->
+        <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+        <script>
+            if (typeof jQuery == 'undefined') {
+                document.write(unescape("%3Cscript src='jquery.js'%3E%3C/script%3E"));
+            }
+        </script>
+    </head>
+    <body class="light">
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme = localStorage.getItem('theme');
+            if (theme == null) { theme = 'light'; }
+            $('body').removeClass().addClass(theme);
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var sidebar = localStorage.getItem('sidebar');
+            if (sidebar === "hidden") { $("html").addClass("sidebar-hidden") }
+            else if (sidebar === "visible") { $("html").addClass("sidebar-visible") }
+        </script>
+
+        <div id="sidebar" class="sidebar">
+            <ul class="chapter"><li class="affix"><a href="./introduction.html">Introduction</a></li><li><a href="./reference.html"><strong>1.</strong> Reference for code reviewers</a></li><li><a href="./code-style/main.html"><strong>2.</strong> General code style</a></li><li><ul class="section"><li><a href="./code-style/formatting-and-whitespace.html"><strong>2.1.</strong> Formatting and whitespace</a></li><li><a href="./code-style/naming.html"><strong>2.2.</strong> Naming</a></li><li><a href="./code-style/imports.html"><strong>2.3.</strong> Imports</a></li><li><a href="./code-style/braces.html"><strong>2.4.</strong> Braces</a></li><li><a href="./code-style/comments.html"><strong>2.5.</strong> Comments</a></li></ul></li><li><a href="./type-system/main.html"><strong>3.</strong> Type system</a></li><li><ul class="section"><li><a href="./type-system/return-type-annotations.html"><strong>3.1.</strong> Return type annotations</a></li><li><a href="./type-system/structural-typing.html"><strong>3.2.</strong> Structural typing</a></li><li><a href="./type-system/generics-and-variance.html"><strong>3.3.</strong> Generics and variance</a></li><li><a href="./type-system/higher-kinded-types.html"><strong>3.4.</strong> Higher-kinded types</a></li><li><a href="./type-system/abstract-types.html"><strong>3.5.</strong> Abstract types</a></li><li><a href="./type-system/path-dependent-types.html"><strong>3.6.</strong> Path-dependent types</a></li><li><a href="./type-system/type-aliases.html"><strong>3.7.</strong> Type aliases</a></li><li><a href="./type-system/any-anyref-and-anyval.html"><strong>3.8.</strong> Any, AnyRef and AnyVal</a></li><li><a href="./type-system/isinstanceof-asinstanceof.html"><strong>3.9.</strong> isInstanceOf, asInstanceOf</a></li></ul></li><li><a href="./language-features/main.html"><strong>4.</strong> Language features</a></li><li><ul class="section"><li><a href="./language-features/implicits.html" class="active"><strong>4.1.</strong> Implicits</a></li><li><a href="./language-features/override-modifier.html"><strong>4.2.</strong> override modifier</a></li><li><a href="./language-features/abstract-override-modifier.html"><strong>4.3.</strong> abstract override modifier</a></li><li><a href="./language-features/pattern-matching.html"><strong>4.4.</strong> Pattern matching</a></li><li><a href="./language-features/multiple-parameter-lists.html"><strong>4.5.</strong> Multiple parameter list</a></li><li><a href="./language-features/symbolic-methods-and-infix-and-postfix-notation.html"><strong>4.6.</strong> Symbolic methods and infix and postfix notation</a></li><li><a href="./language-features/apply-method-on-classes.html"><strong>4.7.</strong> Apply method on classes</a></li><li><a href="./language-features/call-by-name.html"><strong>4.8.</strong> Call by name</a></li><li><a href="./language-features/return-statements.html"><strong>4.9.</strong> Return statements</a></li><li><a href="./language-features/macros.html"><strong>4.10.</strong> Macros</a></li><li><a href="./language-features/exception-handling.html"><strong>4.11.</strong> Exception handling</a></li><li><a href="./language-features/operation-chains.html"><strong>4.12.</strong> Operation chains</a></li><li><a href="./language-features/operations-nesting-and-for-comprehensions.html"><strong>4.13.</strong> Operations nesting and for comprehensions</a></li><li><a href="./language-features/string-interpolation.html"><strong>4.14.</strong> String interpolation</a></li><li><a href="./language-features/tuples.html"><strong>4.15.</strong> Tuples</a></li></ul></li><li><a href="./patterns-and-architecture/main.html"><strong>5.</strong> Patterns and architecture</a></li><li><ul class="section"><li><a href="./patterns-and-architecture/cake-pattern.html"><strong>5.1.</strong> Cake pattern</a></li><li><a href="./patterns-and-architecture/type-classes.html"><strong>5.2.</strong> Type classes</a></li><li><a href="./patterns-and-architecture/error-handling.html"><strong>5.3.</strong> Error handling</a></li><li><a href="./patterns-and-architecture/functional-programming.html"><strong>5.4.</strong> Functional programming</a></li><li><a href="./patterns-and-architecture/object-oriented-programming.html"><strong>5.5.</strong> Object-oriented programming</a></li><li><a href="./patterns-and-architecture/domain-specific-languages.html"><strong>5.6.</strong> Domain-specific languages</a></li></ul></li><li><a href="./libraries/main.html"><strong>6.</strong> Libraries</a></li><li><ul class="section"><li><a href="./libraries/collections.html"><strong>6.1.</strong> Collections</a></li><li><a href="./libraries/concurrency.html"><strong>6.2.</strong> Concurrency</a></li><li><a href="./libraries/other-scala-libraries.html"><strong>6.3.</strong> Other Scala libraries</a></li><li><a href="./libraries/java-libraries.html"><strong>6.4.</strong> Java libraries</a></li></ul></li></ul>
+        </div>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar" class="menu-bar">
+                    <div class="left-buttons">
+                        <i id="sidebar-toggle" class="fa fa-bars"></i>
+                        <i id="theme-toggle" class="fa fa-paint-brush"></i>
+                    </div>
+
+                    <h1 class="menu-title"></h1>
+
+                    <div class="right-buttons">
+                        <i id="print-button" class="fa fa-print" title="Print this book"></i>
+                    </div>
+                </div>
+
+                <div id="content" class="content">
+                    <h1>Implicits</h1>
+<p>Implicits comprise a very powerful part of the Scala language, however (or even therefore) they often lead to code which is very hard to understand if they are overused.</p>
+<p>Implicits as a feature are used pervasively for many tasks across the entire Scala ecosystem, so it unfeasible to completely disallow their usage. In particular, they solve both the expression problem (adding new methods to existing types) and the cross-cutting concerns problem (using a single globally configured value in different places of code) transparently. However, they must be used sparingly, and only when their usage is motivated by a significant increase in readability or by the necessity to integrate with other libraries.</p>
+<p>The general rule is as follows (quoting Twitter's Effective Scala):</p>
+<blockquote>
+<p>If you do find yourself using implicits, always ask yourself if there is a way to achieve the same thing without their help.</p>
+</blockquote>
+<h2>Implicit conversions</h2>
+<p>Implicit conversions are declared as functions which accept a value and return a value of a different type. These functions are then used by the compiler to implicitly convert the original value if necessary, e.g. when it is passed to somewhere when the target type is expected or when a method is called which is not available on the source type but available on the return type:</p>
+<pre><code class="language-scala">implicit def intAsString(x: Int): String = x.toString
+
+x.length  // equivalent to x.toString.length
+</code></pre>
+<p>Implicit conversions are absolutely forbidden to be declared, and their usage from the third-party libraries must be avoided at all costs. Fortunately, the Scala community at large considers implicit conversions as an anti-feature and therefore most popular libraries do not depend on it. One of the notable examples of implicit conversions is the built-in Scala-to-Java collection conversions:</p>
+<pre><code class="language-scala">import scala.collection.JavaConversions._
+
+val s: Vector[Int] = Vector(1, 2, 3)
+val x: java.util.List[Int] = s  // gets converted automatically
+</code></pre>
+<p>Using <code>JavaConversions</code> (and additionally <code>wrapAsJava</code>, <code>wrapAsScala</code> and <code>wrapAll</code>) is strictly forbidden; in case if such conversions are necessary, <code>decoratedAsJava</code>, <code>decorateAsScala</code> or <code>decorateAll</code> should be used:</p>
+<pre><code class="language-scala">import scala.collection.convert.decorateAsJava._
+
+val s: Vector[Int] = Vector(1, 2, 3)
+val x: java.util.List[Int] = s.asJava
+</code></pre>
+<h2>The expression problem, extension methods</h2>
+<p><a href="https://en.wikipedia.org/wiki/Expression_problem">Expression problem</a> is basically a task of adding new operations to an already defined type. It is well known that most of the &quot;old&quot; static languages, like C, C++ and Java, do not have any kind of solution for it. In most dynamic languages this is not a problem due to dynamic typing and monkey patching, but static languages also have their own solutions. For example, C# and Kotlin have extension methods, while Haskell and Rust have type classes (called traits in the latter). Scala solution for the expression problem are methods injected through implicits.</p>
+<p>Modern IDEs, in particular, IntelliJ IDEA, are able to understand most if not all commonly used implicits usage scenarios: in particular, they are able to highlight methods added through implicit classes and show implicit parameters of a method call, and allow to navigate to the definition of these methods. Therefore, using implicits for simple tasks, like adding new methods to existing types, is not forbidden:</p>
+<pre><code class="language-scala">implicit class ArrayOps[A](val arr: Array[A]) extends AnyVal {
+  def firstTwoOpt: Option[(A, A)] = if (arr.length &gt;= 2) Some((arr(0), arr(1))) else None
+}
+</code></pre>
+<p>Note, however, that for this to be acceptable, such extension must be motivated by a significant increase of readability. In particular, this is justified when the newly added operation is used very often in some part of code. If this operation is defined as a regular function, it would require calling it with the function syntax instead of the method syntax:</p>
+<pre><code class="language-scala">arr.firstTwoOpt
+// vs
+firstTwoOpt(arr)
+</code></pre>
+<p>The function syntax requires parentheses, and when there are many calls of this function or if they are present in some complex expression which already has parentheses, it hurts readability. Extension methods, therefore, may be used if they help to reduce the noise.</p>
+<p>Extension methods must only be defined with an <code>implicit class</code> declaration, never via an <code>implicit def</code> conversion (see the above section). If possible, such <code>implicit class</code> must be defined in some object (including package objects) and extend <code>AnyVal</code> in order to avoid performance penalties of boxing.  It makes sense to add such operations to some common internal utilities library, and putting them <em>not</em> there should be avoided.</p>
+<h2>Implicit arguments</h2>
+<p>Implicit arguments are used quite frequently by concurrency and serialization libraries in order to pass some auxiliary values around without them unnecessarily cluttering the code. Examples of such libraries are those using implicits to define class serializers (most JSON libraries in Scala do that) and passing around <code>ExecutionContext</code> with <code>Future</code>s.</p>
+<p>IDEs, in particular, IntelliJ IDEA, are quite capable of showing which implicit values are used in the particular method invocation, so understanding the code when they are used is not a hard problem. Thus, it is allowed to declare implicit arguments, especially when integrating with libraries mentioned above:</p>
+<pre><code class="language-scala">// here both query() and map() calls accept the execution context implicitly
+def load(id: String)(implicit ec: ExecutionContext): Future[SomeObject] =
+  remoteApi.query(id).map(convertFromJson)
+</code></pre>
+<p>However, it is almost never necessary to use implicit parameters of the types defined in the custom code base. Oftentimes this is done to &quot;simplify&quot; the code which eventually results in code which is messy and hard to read. Therefore, using implicit parameters for custom types unrelated to other libraries should be avoided.</p>
+<p>When interacting with the third-party libraries, it is sometimes necessary to define new implicit objects. The most prominent example is defining serializers for custom types. Definition of these implicits must be as contained as possible. Ideally a set of such definitions which are related in some way should be grouped together in one object, and this object should be imported when these implicits are needed:</p>
+<pre><code class="language-scala">object ModelJsonFormatters {
+  implicit val userFormat = Json.format[User]
+  implicit val serviceFormat = Json.format[Service]
+  implicit val whateverFormat = Json.format[Whatever]
+}
+
+// at the use site
+import some.pkg.ModelJsonFormatters._
+
+val jsonData = Json.toJson(Whatever(...))
+</code></pre>
+<p>Naturally, using them must not contradict the rules about imports as they are defined above.</p>
+<p>As a final note, implicits are sometimes feared because they are used in complex libraries like scalaz. However, these libraries actually provide <em>concepts</em> which are hard to understand without prior experience; implicits only allow these libraries not to look absolutely horrible, and their absence from there would not make things better. This is the reason why usage of implicits is allowed: if used correctly (according to the guidelines presented above), they lead to much clearer code. If they are used together with a library which itself is very complex, they make things worse. The solution is to avoid using such libraries but not implicits; more on this below.</p>
+
+                </div>
+
+                <!-- Mobile navigation buttons -->
+                
+                    <a href="./language-features/main.html" class="mobile-nav-chapters previous">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="./language-features/override-modifier.html" class="mobile-nav-chapters next">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+
+            </div>
+
+            
+                <a href="./language-features/main.html" class="nav-chapters previous" title="You can navigate through the chapters using the arrow keys">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+            
+
+            
+                <a href="./language-features/override-modifier.html" class="nav-chapters next" title="You can navigate through the chapters using the arrow keys">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            
+
+        </div>
+
+
+        <!-- Local fallback for Font Awesome -->
+        <script>
+            if ($(".fa").css("font-family") !== "FontAwesome") {
+                $('<link rel="stylesheet" type="text/css" href="_FontAwesome/css/font-awesome.css">').prependTo('head');
+            }
+        </script>
+
+        <!-- Livereload script (if served using the cli tool) -->
+        
+
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+    </body>
+</html>

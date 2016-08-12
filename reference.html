@@ -1,0 +1,162 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <base href="">
+
+        <link rel="stylesheet" href="book.css">
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+        <link rel="shortcut icon" href="favicon.png">
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+
+        <!-- MathJax -->
+        <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Fetch JQuery from CDN but have a local fallback -->
+        <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+        <script>
+            if (typeof jQuery == 'undefined') {
+                document.write(unescape("%3Cscript src='jquery.js'%3E%3C/script%3E"));
+            }
+        </script>
+    </head>
+    <body class="light">
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme = localStorage.getItem('theme');
+            if (theme == null) { theme = 'light'; }
+            $('body').removeClass().addClass(theme);
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var sidebar = localStorage.getItem('sidebar');
+            if (sidebar === "hidden") { $("html").addClass("sidebar-hidden") }
+            else if (sidebar === "visible") { $("html").addClass("sidebar-visible") }
+        </script>
+
+        <div id="sidebar" class="sidebar">
+            <ul class="chapter"><li class="affix"><a href="./introduction.html">Introduction</a></li><li><a href="./reference.html" class="active"><strong>1.</strong> Reference for code reviewers</a></li><li><a href="./code-style/main.html"><strong>2.</strong> General code style</a></li><li><ul class="section"><li><a href="./code-style/formatting-and-whitespace.html"><strong>2.1.</strong> Formatting and whitespace</a></li><li><a href="./code-style/naming.html"><strong>2.2.</strong> Naming</a></li><li><a href="./code-style/imports.html"><strong>2.3.</strong> Imports</a></li><li><a href="./code-style/braces.html"><strong>2.4.</strong> Braces</a></li><li><a href="./code-style/comments.html"><strong>2.5.</strong> Comments</a></li></ul></li><li><a href="./type-system/main.html"><strong>3.</strong> Type system</a></li><li><ul class="section"><li><a href="./type-system/return-type-annotations.html"><strong>3.1.</strong> Return type annotations</a></li><li><a href="./type-system/structural-typing.html"><strong>3.2.</strong> Structural typing</a></li><li><a href="./type-system/generics-and-variance.html"><strong>3.3.</strong> Generics and variance</a></li><li><a href="./type-system/higher-kinded-types.html"><strong>3.4.</strong> Higher-kinded types</a></li><li><a href="./type-system/abstract-types.html"><strong>3.5.</strong> Abstract types</a></li><li><a href="./type-system/path-dependent-types.html"><strong>3.6.</strong> Path-dependent types</a></li><li><a href="./type-system/type-aliases.html"><strong>3.7.</strong> Type aliases</a></li><li><a href="./type-system/any-anyref-and-anyval.html"><strong>3.8.</strong> Any, AnyRef and AnyVal</a></li><li><a href="./type-system/isinstanceof-asinstanceof.html"><strong>3.9.</strong> isInstanceOf, asInstanceOf</a></li></ul></li><li><a href="./language-features/main.html"><strong>4.</strong> Language features</a></li><li><ul class="section"><li><a href="./language-features/implicits.html"><strong>4.1.</strong> Implicits</a></li><li><a href="./language-features/override-modifier.html"><strong>4.2.</strong> override modifier</a></li><li><a href="./language-features/abstract-override-modifier.html"><strong>4.3.</strong> abstract override modifier</a></li><li><a href="./language-features/pattern-matching.html"><strong>4.4.</strong> Pattern matching</a></li><li><a href="./language-features/multiple-parameter-lists.html"><strong>4.5.</strong> Multiple parameter list</a></li><li><a href="./language-features/symbolic-methods-and-infix-and-postfix-notation.html"><strong>4.6.</strong> Symbolic methods and infix and postfix notation</a></li><li><a href="./language-features/apply-method-on-classes.html"><strong>4.7.</strong> Apply method on classes</a></li><li><a href="./language-features/call-by-name.html"><strong>4.8.</strong> Call by name</a></li><li><a href="./language-features/return-statements.html"><strong>4.9.</strong> Return statements</a></li><li><a href="./language-features/macros.html"><strong>4.10.</strong> Macros</a></li><li><a href="./language-features/exception-handling.html"><strong>4.11.</strong> Exception handling</a></li><li><a href="./language-features/operation-chains.html"><strong>4.12.</strong> Operation chains</a></li><li><a href="./language-features/operations-nesting-and-for-comprehensions.html"><strong>4.13.</strong> Operations nesting and for comprehensions</a></li><li><a href="./language-features/string-interpolation.html"><strong>4.14.</strong> String interpolation</a></li><li><a href="./language-features/tuples.html"><strong>4.15.</strong> Tuples</a></li></ul></li><li><a href="./patterns-and-architecture/main.html"><strong>5.</strong> Patterns and architecture</a></li><li><ul class="section"><li><a href="./patterns-and-architecture/cake-pattern.html"><strong>5.1.</strong> Cake pattern</a></li><li><a href="./patterns-and-architecture/type-classes.html"><strong>5.2.</strong> Type classes</a></li><li><a href="./patterns-and-architecture/error-handling.html"><strong>5.3.</strong> Error handling</a></li><li><a href="./patterns-and-architecture/functional-programming.html"><strong>5.4.</strong> Functional programming</a></li><li><a href="./patterns-and-architecture/object-oriented-programming.html"><strong>5.5.</strong> Object-oriented programming</a></li><li><a href="./patterns-and-architecture/domain-specific-languages.html"><strong>5.6.</strong> Domain-specific languages</a></li></ul></li><li><a href="./libraries/main.html"><strong>6.</strong> Libraries</a></li><li><ul class="section"><li><a href="./libraries/collections.html"><strong>6.1.</strong> Collections</a></li><li><a href="./libraries/concurrency.html"><strong>6.2.</strong> Concurrency</a></li><li><a href="./libraries/other-scala-libraries.html"><strong>6.3.</strong> Other Scala libraries</a></li><li><a href="./libraries/java-libraries.html"><strong>6.4.</strong> Java libraries</a></li></ul></li></ul>
+        </div>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar" class="menu-bar">
+                    <div class="left-buttons">
+                        <i id="sidebar-toggle" class="fa fa-bars"></i>
+                        <i id="theme-toggle" class="fa fa-paint-brush"></i>
+                    </div>
+
+                    <h1 class="menu-title"></h1>
+
+                    <div class="right-buttons">
+                        <i id="print-button" class="fa fa-print" title="Print this book"></i>
+                    </div>
+                </div>
+
+                <div id="content" class="content">
+                    <h1>Reference for code reviewers (TODO)</h1>
+<p>This section summarizes the entire guide in order to help those who perform code reviews to catch common mistakes and deviations from the code style guidelines. Consult this section when you're reviewing someone else's code to remind yourself the most common things which you should be on the lookout for.</p>
+<p>Subsections of this section describe the things which require paying attention for during the code reviews. There are patterns which are forbidden to be used, and if you see one, you must not sign the patch which introduces it off. Other patterns, while not forbidden, require to be sufficiently motivated to pass the review.</p>
+<p>Remember, the main intention of this guide is to increase the readability and maintainability of the code, so when reviewing someone else's code, always keep this in mind and try to consider how it will affect the long-term quality of the code base and how easy it would be for someone unfamiliar with the project to understand it.</p>
+<h2>Forbidden (TODO)</h2>
+<p>The following language features and patterns are forbidden to be used in any case. Do not accept a patch if it contains any of them. Some of these items are automatically checked for by build system tools.</p>
+<ul>
+<li><a href="#implicit-conversions">Implicit conversions</a></li>
+<li><a href="#structural-typing">Structural typing</a></li>
+<li><a href="#abstract-associated-types">Abstract types</a> (do not confuse them with regular type aliases)</li>
+<li><a href="#path-dependent-types">Path-dependent types</a></li>
+<li>Declaring custom <a href="#higher-kinded-types">higher-kinded types</a></li>
+<li>Missing <a href="#override-modifier"><code>override</code> modifier</a> when it is applicable</li>
+<li>Missing <a href="#return-type-annotations">return type annotations</a> on the parts of public API</li>
+<li><a href="#abstract-override-modifier"><code>abstract override</code></a></li>
+<li><a href="#apply-method-on-classes"><code>apply()</code> and <code>unapply()</code> methods in classes</a></li>
+<li><a href="#symbolic-methods-and-infix-and-postfix-notation">Custom symbolic methods declaration</a></li>
+<li>Postfix method calls</li>
+<li><code>catch { case e: Throwable =&gt; }</code> or <code>catch { case _ =&gt; }</code></li>
+<li>Custom macros</li>
+<li>Cake pattern</li>
+<li><code>var</code> members or other mutable objects in case classes</li>
+<li><code>var</code> or <code>lazy val</code> as abstract members</li>
+<li>Defining custom DSLs</li>
+<li><code>null</code> (except for interaction with badly written Java libraries)</li>
+<li>Returning collection views from functions and storing them in other objects</li>
+</ul>
+<h2>Suspicious (TODO)</h2>
+<p>If you notice the following language features and patterns in the submitted code, you should take especially utmost care in reviewing them. Always ask yourself, whether it is possible to do away without using them altogether. Their usage should usually be motivated by a significant increase in code clarity and readability; do not hesitate to ask the author of the code to explain why they used these items and to rewrite the code without them if it benefits code readability (especially for developers who are unfamiliar with the code base) and maintainability.</p>
+<ul>
+<li>Missing return type annotations in non-public code</li>
+<li><code>Any</code>, <code>AnyRef</code>, <code>AnyVal</code> and <code>isInstanceOf</code> and <code>asInstanceOf</code></li>
+<li>Implicits in general: implicit arguments and implicit classes</li>
+<li><code>unapply()</code> methods</li>
+<li>Multiple parameter lists</li>
+<li>Infix notation</li>
+<li>Call-by-name arguments</li>
+<li>Operations chains, operations nesting</li>
+<li>Tuples and their elements accessors</li>
+<li>Definition of custom type classes (should have <em>significant</em> motivation to be accepted)</li>
+<li><code>null</code>s again</li>
+<li><code>Option.get</code></li>
+<li>Recursion</li>
+<li>Abstract <code>val</code> members</li>
+<li>Using DSLs provided by third-party libraries (only in exceptional cases when it cannot be avoided)</li>
+</ul>
+
+                </div>
+
+                <!-- Mobile navigation buttons -->
+                
+                    <a href="./introduction.html" class="mobile-nav-chapters previous">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="./code-style/main.html" class="mobile-nav-chapters next">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+
+            </div>
+
+            
+                <a href="./introduction.html" class="nav-chapters previous" title="You can navigate through the chapters using the arrow keys">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+            
+
+            
+                <a href="./code-style/main.html" class="nav-chapters next" title="You can navigate through the chapters using the arrow keys">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            
+
+        </div>
+
+
+        <!-- Local fallback for Font Awesome -->
+        <script>
+            if ($(".fa").css("font-family") !== "FontAwesome") {
+                $('<link rel="stylesheet" type="text/css" href="_FontAwesome/css/font-awesome.css">').prependTo('head');
+            }
+        </script>
+
+        <!-- Livereload script (if served using the cli tool) -->
+        
+
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+    </body>
+</html>
