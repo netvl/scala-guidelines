@@ -6,13 +6,36 @@ Scala has a very powerful collections library, which contains immutable, mutable
 
 Here is a diagram of the basic collection types, both mutable and immutable:
 
-**TODO (traversable, iterable, seq, set, map)**
+```
+                            +-----------------+
+                            |                 |
+                            |   Traversable   |
+                            |                 |
+                            +--------+--------+
+                                     ^
+                                     |
+                                     |
+                            +--------+--------+
+                            |                 |
+                            |    Iterable     |
+                            |                 |
+                            +----+---+---+----+
+                                 |   ^   |
+         +-----------------------^   |   ^-----------------------+
+         |                           |                           |
++--------+--------+         +--------+--------+         +--------+--------+
+|                 |         |                 |         |                 |
+|       Seq       |         |       Set       |         |       Map       |
+|                 |         |                 |         |                 |
++-----------------+         +-----------------+         +-----------------+
+
+```
 
 The base trait, `Traversable[T]`, represents something which can be internally iterated - it provides a `foreach(f: T => Unit)` method which calls its argument for every item contained in the collection. This trait is very general and it can describe not only regular collections like lists or sets, but also e.g. ephemeral streams of data.
 
 `Iterable[T]` is something which can be externally iterated - being quite similar to Java's `Iterable<T>`, it has one method, `def iterator: Iterator[T]`, which returns an iterator which can be used to walk over the collection. `foreach()` implementation for an `Iterable` is trivial, therefore it extends `Traversable`.
 
-`Seq`, `Set` and `Map` are base types for the respective "kinds" of collections. `Seq`s are collections whose items are laid out sequentially and therefore can be accessed using zero-based index. `Set`s are collections which cannot contain duplicate elements, and usually have effective membership check. `Map`s are collections of key-value pairs where keys are unique, and they usually have effective lookup by key.
+`Seq`, `Set` and `Map` are base types for the respective "kinds" of collections. `Seq`s are collections whose items are laid out sequentially and therefore can be accessed using a zero-based index. `Set`s are collections which cannot contain duplicate elements, and usually have an effective membership check. `Map`s are collections of key-value pairs where keys are unique, and they usually have effective lookup by key.
 
 There is one weird quirk of the standard Scala library which should always be taken into account. `Map` and `Set`, when used in the regular code without any special imports, come from `scala.Predef` object (whose internals are imported into every Scala file automatically), and there they are declared as aliases to `scala.collection.immutable.*` types:
 
@@ -158,11 +181,18 @@ val itemsByName = itemsByNameIterator.toMap
 
 When you assign iterators to variables, name the variables with `Iterator` suffix to distinguish them from regular collections.
 
+### Views
+
 An alternative to iterators would be using collection views, which are essentially reusable iterators. However, views in Scala implement the same interfaces as regular collections, and therefore it is easy to store e.g. `MapView` as a `Map`. This is bad, because transformations applied to views are not executed eagerly, they are delayed until elements of the view are accessed, just like with iterators. When such a view is stored in a frequently used variable, all these transformations will be recomputed each time when elements of the view are accessed.
 
 Using views may sometimes be beneficial (e.g. when you want to keep the concrete type of a collection after a sequence of transformations), but it is very easy to forget to call `.force` on the view object to go back to a non-ephemeral collection, so they should be used with care. Never return views from functions, and never store views into other objects; they must be used only for temporary transformations. If you need to create a reusable part of a transformation chain, create a function which returns `Iterator` instead.
 
-Another thing to be aware of with regard to views is that some of the convenient collection methods like `.mapValues` on a map actually return views instead of doing transformations, however, such views do not actually implement the view traits and therefore they do not have a `.force` method. **TODO: add a list of such methods here**
+Another thing to be aware of with regard to views is that some of the convenient collection methods actually return views instead of doing transformations, however, such views do not actually implement the view traits and therefore they do not have a `.force` method. Examples of such methods are:
+
+* `Map.mapValues`
+* `Map.filterValues`
+
+It is dangerous to use these methods because the objects they return will recompute the mapping/filtering function each time their values are accessed. One of the ways to work around this is to call `.view.force` chain of methods which will always create a new map out of this "view".
 
 If you're doing only a single transformation operation, and you need to get a collection of the same type as the original collection, omit the iterator conversion because the necessary type will be constructed automatically:
 

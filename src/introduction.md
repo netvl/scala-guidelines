@@ -8,9 +8,9 @@ Some of these practices are enforced automatically with the code style analyzers
 
 This document is heavily based on the following existing Scala guidelines:
 
-* Twitter's Effective Scala: https://twitter.github.io/effectivescala/
-* Databricks Scala Guide: https://github.com/databricks/scala-style-guide
-* Scala Best Practices: https://github.com/alexandru/scala-best-practices
+* [Twitter's Effective Scala](https://twitter.github.io/effectivescala/)
+* [Databricks Scala Guide](https://github.com/databricks/scala-style-guide)
+* [Scala Best Practices](https://github.com/alexandru/scala-best-practices)
 
 as well as our own experience in writing Scala code.
 

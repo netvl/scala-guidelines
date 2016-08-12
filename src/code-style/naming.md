@@ -6,7 +6,7 @@ Follow the rule "longer names for larger scopes, shorter names for smaller scope
 
 ## Apostrophes
 
-Avoid using \`s to overload reserved names. Use of apostrophes in pattern matching for equality checking, on the other hand, is acceptable:
+Avoid using \`s to overload reserved names, except when there is a need to integrate with Java API or when the alternative reads significantly worse. Use of apostrophes in pattern matching for equality checking, on the other hand, is acceptable:
 
 ```scala
 val name = "hello"
@@ -22,9 +22,9 @@ Constants must always follow the `PascalCase` naming rule, according to the defa
 
 Constants must always be defined in objects. If a constant is only used in one class, then it should be defined in its companion object. If a constant is used in multiple classes, it should be defined in some common object.
 
-Constants must not be defined in package objects.
+Constants must not be defined in package objects, with potential exception of type class instances declarations.
 
-## Getters
+## Getters and setters
 
 Do not prefix getters with `get`, just name the getter after the thing it retrieves:
 
@@ -32,6 +32,21 @@ Do not prefix getters with `get`, just name the getter after the thing it retrie
 trait Nameable {
   def name: String
 }
+```
+
+In those (rare) cases when you need to declare a setter, use the standard Scala convention:
+
+```scala
+trait Nameable {
+  def name: String
+  def name_=(n: String): Unit
+```
+
+This syntax allows using the assignment syntax to change the property:
+
+```scala
+val obj: Nameable = ...
+obj.name = "whatever"
 ```
 
 ## Names shadowing
@@ -57,4 +72,4 @@ organization match {
 }
 ```
 
-Names shadowing can be resolved by the IDEs, but nevertheless is a bad idea because it is very easy to mistake one variable for another. Use more appropriate names for each variable and pattern.
+Names shadowing can be resolved by the IDEs through syntax highlighting, but nevertheless is a bad idea because it is very easy to mistake one variable for another. Use more appropriate names for each variable and pattern.
