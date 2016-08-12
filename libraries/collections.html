@@ -71,10 +71,32 @@
 <p>Scala has a very powerful collections library, which contains immutable, mutable and parallel collections for virtually any purpose. While its implementation is quite complex, and extending it may be hard and would require using complex language features like higher-kinded types and implicits, in the everyday work it is very easy to use. To use the collections library efficiently, it is highly recommended to read <a href="http://docs.scala-lang.org/overviews/collections/introduction.html">the official overview</a> of the collections library first.</p>
 <h2>Overview</h2>
 <p>Here is a diagram of the basic collection types, both mutable and immutable:</p>
-<p><strong>TODO (traversable, iterable, seq, set, map)</strong></p>
+<pre><code>                            +-----------------+
+                            |                 |
+                            |   Traversable   |
+                            |                 |
+                            +--------+--------+
+                                     ^
+                                     |
+                                     |
+                            +--------+--------+
+                            |                 |
+                            |    Iterable     |
+                            |                 |
+                            +----+---+---+----+
+                                 |   ^   |
+         +-----------------------^   |   ^-----------------------+
+         |                           |                           |
++--------+--------+         +--------+--------+         +--------+--------+
+|                 |         |                 |         |                 |
+|       Seq       |         |       Set       |         |       Map       |
+|                 |         |                 |         |                 |
++-----------------+         +-----------------+         +-----------------+
+
+</code></pre>
 <p>The base trait, <code>Traversable[T]</code>, represents something which can be internally iterated - it provides a <code>foreach(f: T =&gt; Unit)</code> method which calls its argument for every item contained in the collection. This trait is very general and it can describe not only regular collections like lists or sets, but also e.g. ephemeral streams of data.</p>
 <p><code>Iterable[T]</code> is something which can be externally iterated - being quite similar to Java's <code>Iterable&lt;T&gt;</code>, it has one method, <code>def iterator: Iterator[T]</code>, which returns an iterator which can be used to walk over the collection. <code>foreach()</code> implementation for an <code>Iterable</code> is trivial, therefore it extends <code>Traversable</code>.</p>
-<p><code>Seq</code>, <code>Set</code> and <code>Map</code> are base types for the respective &quot;kinds&quot; of collections. <code>Seq</code>s are collections whose items are laid out sequentially and therefore can be accessed using zero-based index. <code>Set</code>s are collections which cannot contain duplicate elements, and usually have effective membership check. <code>Map</code>s are collections of key-value pairs where keys are unique, and they usually have effective lookup by key.</p>
+<p><code>Seq</code>, <code>Set</code> and <code>Map</code> are base types for the respective &quot;kinds&quot; of collections. <code>Seq</code>s are collections whose items are laid out sequentially and therefore can be accessed using a zero-based index. <code>Set</code>s are collections which cannot contain duplicate elements, and usually have effective membership check. <code>Map</code>s are collections of key-value pairs where keys are unique, and they usually have effective lookup by key.</p>
 <p>There is one weird quirk of the standard Scala library which should always be taken into account. <code>Map</code> and <code>Set</code>, when used in the regular code without any special imports, come from <code>scala.Predef</code> object (whose internals are imported into every Scala file automatically), and there they are declared as aliases to <code>scala.collection.immutable.*</code> types:</p>
 <pre><code class="language-scala">type Map = scala.collection.immutable.Map
 type Set = scala.collection.immutable.Set
@@ -163,9 +185,15 @@ val itemsById = items.iterator.map(item =&gt; item.id -&gt; item).toMap
 val itemsByName = itemsByNameIterator.toMap
 </code></pre>
 <p>When you assign iterators to variables, name the variables with <code>Iterator</code> suffix to distinguish them from regular collections.</p>
+<h3>Views</h3>
 <p>An alternative to iterators would be using collection views, which are essentially reusable iterators. However, views in Scala implement the same interfaces as regular collections, and therefore it is easy to store e.g. <code>MapView</code> as a <code>Map</code>. This is bad, because transformations applied to views are not executed eagerly, they are delayed until elements of the view are accessed, just like with iterators. When such a view is stored in a frequently used variable, all these transformations will be recomputed each time when elements of the view are accessed.</p>
 <p>Using views may sometimes be beneficial (e.g. when you want to keep the concrete type of a collection after a sequence of transformations), but it is very easy to forget to call <code>.force</code> on the view object to go back to a non-ephemeral collection, so they should be used with care. Never return views from functions, and never store views into other objects; they must be used only for temporary transformations. If you need to create a reusable part of a transformation chain, create a function which returns <code>Iterator</code> instead.</p>
-<p>Another thing to be aware of with regard to views is that some of the convenient collection methods like <code>.mapValues</code> on a map actually return views instead of doing transformations, however, such views do not actually implement the view traits and therefore they do not have a <code>.force</code> method. <strong>TODO: add a list of such methods here</strong></p>
+<p>Another thing to be aware of with regard to views is that some of the convenient collection methods actually return views instead of doing transformations, however, such views do not actually implement the view traits and therefore they do not have a <code>.force</code> method. Examples of such methods are:</p>
+<ul>
+<li><code>Map.mapValues</code></li>
+<li><code>Map.filterValues</code></li>
+</ul>
+<p>It is dangerous to use these methods because the objects they return will recompute the mapping/filtering function each time their values are accessed. One of the ways to work around this is to call <code>.view.force</code> chain of methods which will always create a new map out of this &quot;view&quot;.</p>
 <p>If you're doing only a single transformation operation, and you need to get a collection of the same type as the original collection, omit the iterator conversion because the necessary type will be constructed automatically:</p>
 <pre><code class="language-scala">val itemIds: Set[String] = ...
 val items: Set[Item] = itemIds.flatMap(itemsDao.findById)

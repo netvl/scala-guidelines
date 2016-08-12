@@ -73,60 +73,67 @@
 <p>Some of these practices are enforced automatically with the code style analyzers and linters, and therefore their violation will result in a failed build. Most, however, are enforced through the code review process. Therefore, it is absolutely necessary for the reviewers to understand this document by heart and apply it rigorously. To help with this task, a dedicated section at the end of the document serves as a handbook for reviewers, providing a list of most important things to look for during the code review.</p>
 <p>This document is heavily based on the following existing Scala guidelines:</p>
 <ul>
-<li>Twitter's Effective Scala: https://twitter.github.io/effectivescala/</li>
-<li>Databricks Scala Guide: https://github.com/databricks/scala-style-guide</li>
-<li>Scala Best Practices: https://github.com/alexandru/scala-best-practices</li>
+<li><a href="https://twitter.github.io/effectivescala/">Twitter's Effective Scala</a></li>
+<li><a href="https://github.com/databricks/scala-style-guide">Databricks Scala Guide</a></li>
+<li><a href="https://github.com/alexandru/scala-best-practices">Scala Best Practices</a></li>
 </ul>
 <p>as well as our own experience in writing Scala code.</p>
 <p>This document will be updated in the future to include things we will encounter when dealing with new code contributions.</p>
-<h1>Reference for code reviewers (TODO)</h1>
+<h1>Reference for code reviewers</h1>
 <p>This section summarizes the entire guide in order to help those who perform code reviews to catch common mistakes and deviations from the code style guidelines. Consult this section when you're reviewing someone else's code to remind yourself the most common things which you should be on the lookout for.</p>
 <p>Subsections of this section describe the things which require paying attention for during the code reviews. There are patterns which are forbidden to be used, and if you see one, you must not sign the patch which introduces it off. Other patterns, while not forbidden, require to be sufficiently motivated to pass the review.</p>
-<p>Remember, the main intention of this guide is to increase the readability and maintainability of the code, so when reviewing someone else's code, always keep this in mind and try to consider how it will affect the long-term quality of the code base and how easy it would be for someone unfamiliar with the project to understand it.</p>
-<h2>Forbidden (TODO)</h2>
+<p>Remember, the main intention of this guide is to increase the readability and maintainability of the code, so, when you are reviewing someone else's code, always keep this in mind and try to consider how it will affect the long-term quality of the code base and how easy it would be for someone unfamiliar with the project to understand it.</p>
+<h2>Forbidden</h2>
 <p>The following language features and patterns are forbidden to be used in any case. Do not accept a patch if it contains any of them. Some of these items are automatically checked for by build system tools.</p>
 <ul>
-<li><a href="#implicit-conversions">Implicit conversions</a></li>
-<li><a href="#structural-typing">Structural typing</a></li>
-<li><a href="#abstract-associated-types">Abstract types</a> (do not confuse them with regular type aliases)</li>
-<li><a href="#path-dependent-types">Path-dependent types</a></li>
-<li>Declaring custom <a href="#higher-kinded-types">higher-kinded types</a></li>
-<li>Missing <a href="#override-modifier"><code>override</code> modifier</a> when it is applicable</li>
-<li>Missing <a href="#return-type-annotations">return type annotations</a> on the parts of public API</li>
-<li><a href="#abstract-override-modifier"><code>abstract override</code></a></li>
-<li><a href="#apply-method-on-classes"><code>apply()</code> and <code>unapply()</code> methods in classes</a></li>
-<li><a href="#symbolic-methods-and-infix-and-postfix-notation">Custom symbolic methods declaration</a></li>
-<li>Postfix method calls</li>
-<li><code>catch { case e: Throwable =&gt; }</code> or <code>catch { case _ =&gt; }</code></li>
-<li>Custom macros</li>
-<li>Cake pattern</li>
-<li><code>var</code> members or other mutable objects in case classes</li>
-<li><code>var</code> or <code>lazy val</code> as abstract members</li>
-<li>Defining custom DSLs</li>
-<li><code>null</code> (except for interaction with badly written Java libraries)</li>
-<li>Returning collection views from functions and storing them in other objects</li>
+<li><a href="language-features/implicits.html#Implicit%20conversions">Implicit conversions</a></li>
+<li><a href="type-system/structural-typing.html">Structural typing</a></li>
+<li><a href="type-system/abstract-types.html">Abstract types</a> (do not confuse them with regular type aliases)</li>
+<li><a href="type-system/path-dependent-types.html">Path-dependent types</a></li>
+<li>Declaring custom <a href="type-system/higher-kinded-types.html">higher-kinded types</a></li>
+<li>Missing <a href="language-features/override-modifier.html"><code>override</code> modifier</a> when it is applicable</li>
+<li>Missing <a href="type-system/return-type-annotations.html">return type annotations</a> on the parts of public API</li>
+<li><a href="language-features/abstract-override-modifier.html"><code>abstract override</code></a></li>
+<li><a href="language-features/apply-method-on-classes.html"><code>apply()</code></a> and <a href="language-features/pattern-matching.html#unapply%20methods"><code>unapply()</code></a> methods in classes</li>
+<li><a href="language-features/symbolic-methods-and-infix-and-postfix-notation.html">Custom symbolic methods declaration</a></li>
+<li><a href="language-features/symbolic-methods-and-infix-and-postfix-notation.html">Postfix method calls</a></li>
+<li><a href="language-features/exception-handling.html"><code>catch { case e: Throwable =&gt; }</code> or <code>catch { case _ =&gt; }</code></a></li>
+<li><a href="language-features/macros.html">Custom macros</a></li>
+<li><a href="patterns-and-architecture/cake-pattern.html">Cake pattern</a></li>
+<li><a href="patterns-and-architecture/functional-programming.html#Immutability"><code>var</code> members or other mutable objects in case classes</a></li>
+<li><a href="patterns-and-architecture/object-oriented-programming.html#Members"><code>var</code> or <code>lazy val</code> as abstract members</a></li>
+<li><a href="patterns-and-architecture/domain-specific-languages.html">Defining custom DSLs</a></li>
+<li><a href="patterns-and-architecture/functional-programming.html#Options%20and%20null"><code>null</code>s</a> (except for interaction with Java libraries)</li>
+<li>Returning <a href="libraries/collections.html#Views">collection views</a> from functions and storing them in other objects</li>
 </ul>
-<h2>Suspicious (TODO)</h2>
+<h2>Suspicious</h2>
 <p>If you notice the following language features and patterns in the submitted code, you should take especially utmost care in reviewing them. Always ask yourself, whether it is possible to do away without using them altogether. Their usage should usually be motivated by a significant increase in code clarity and readability; do not hesitate to ask the author of the code to explain why they used these items and to rewrite the code without them if it benefits code readability (especially for developers who are unfamiliar with the code base) and maintainability.</p>
 <ul>
-<li>Missing return type annotations in non-public code</li>
-<li><code>Any</code>, <code>AnyRef</code>, <code>AnyVal</code> and <code>isInstanceOf</code> and <code>asInstanceOf</code></li>
-<li>Implicits in general: implicit arguments and implicit classes</li>
-<li><code>unapply()</code> methods</li>
-<li>Multiple parameter lists</li>
-<li>Infix notation</li>
-<li>Call-by-name arguments</li>
-<li>Operations chains, operations nesting</li>
-<li>Tuples and their elements accessors</li>
-<li>Definition of custom type classes (should have <em>significant</em> motivation to be accepted)</li>
-<li><code>null</code>s again</li>
-<li><code>Option.get</code></li>
-<li>Recursion</li>
-<li>Abstract <code>val</code> members</li>
-<li>Using DSLs provided by third-party libraries (only in exceptional cases when it cannot be avoided)</li>
+<li><a href="type-system/any-anyref-and-anyval.html"><code>Any</code>, <code>AnyRef</code>, <code>AnyVal</code></a></li>
+<li><a href="type-system/isinstanceof-asinstanceof.html"><code>isInstanceOf</code> and <code>asInstanceOf</code></a></li>
+<li><a href="language-features/implicits.html">Implicits</a> in general, implicit arguments and implicit classes in particular</li>
+<li><a href="language-features/pattern-matching.html#unapply%20methods"><code>unapply()</code></a> methods</li>
+<li><a href="language-features/multiple-parameter-lists.html">Multiple parameter lists</a></li>
+<li><a href="language-features/symbolic-methods-and-infix-and-postfix-notation.html">Infix notation</a></li>
+<li><a href="language-features/call-by-name.html">Call-by-name</a> arguments</li>
+<li><a href="language-features/operation-chains.html">Operation chains</a> and <a href="language-features/operations-nesting-and-for-comprehensions.html">operations nesting</a></li>
+<li><a href="language-features/tuples.html">Tuples</a> and their elements accessors</li>
+<li>Definition of custom <a href="language-features/type-classes.html">type classes</a></li>
+<li><a href="patterns-and-architecture/functional-programming.html#Options%20and%20null"><code>null</code>s</a> again</li>
+<li><a href="patterns-and-architecture/functional-programming.html#Options%20and%20null"><code>Option.get</code></a></li>
+<li><a href="patterns-and-architecture/functional-programming.html#Recursion">Recursion</a></li>
+<li><a href="patterns-and-architecture/object-oriented-programming.html#Members">Abstract <code>val</code> members</a></li>
+<li><a href="patterns-and-architecture/domain-specific-languages.html">Using DSLs</a> provided by third-party libraries</li>
+<li>Missing <a href="type-system/return-type-annotations.html">return type annotations</a> in non-public code</li>
 </ul>
-<h1>General code style (TODO?)</h1>
+<h1>General code style</h1>
 <p>As a general rule, constantly monitor warnings and other notices which your IDE shows you. IntelliJ IDEA in particular has clever analysis features which are very helpful to avoid many mistakes in the code style. If you use IDEA to make commits, enable &quot;Before commit / Perform code analysis&quot; option in its commit window - it will display all errors and warnings it sees in the code you're about to commit.</p>
+<p>Sometime it is necessary to disable Scalastyle checks for a particular piece of code. To do so, you have to wrap the section of code with the following comments:</p>
+<pre><code class="language-scala">// scalastyle:off public.methods.have.type
+...
+// scalastyle:on public.methods.have.type
+</code></pre>
+<p>An example of when this would be necessary are null-heavy pieces of code (when interacting with Java libraries) or Play controllers in which public methods do not actually need return types.</p>
 <h1>Formatting and whitespace</h1>
 <p>Formatting suggested by the configured IDEA should be preferred. If in doubt, use the &quot;Reformat code&quot; action.</p>
 <p>Lines should be indented with two spaces. Lines longer than 120 characters in length should be avoided.</p>
@@ -134,7 +141,7 @@
 <h2>Length of names</h2>
 <p>Follow the rule &quot;longer names for larger scopes, shorter names for smaller scopes&quot;. One-letter names for numeric loops indices are acceptable, same names for most of local variables and pattern variables are not.</p>
 <h2>Apostrophes</h2>
-<p>Avoid using `s to overload reserved names. Use of apostrophes in pattern matching for equality checking, on the other hand, is acceptable:</p>
+<p>Avoid using `s to overload reserved names, except when there is a need to integrate with Java API or when the alternative reads significantly worse. Use of apostrophes in pattern matching for equality checking, on the other hand, is acceptable:</p>
 <pre><code class="language-scala">val name = &quot;hello&quot;
 
 x match {
@@ -144,12 +151,21 @@ x match {
 <h2>Constant names</h2>
 <p>Constants must always follow the <code>PascalCase</code> naming rule, according to the default style used in Scala community. Do not use <code>CAPITAL_SNAKE_CASE</code> or <code>camelCase</code> for constant names.</p>
 <p>Constants must always be defined in objects. If a constant is only used in one class, then it should be defined in its companion object. If a constant is used in multiple classes, it should be defined in some common object.</p>
-<p>Constants must not be defined in package objects.</p>
-<h2>Getters</h2>
+<p>Constants must not be defined in package objects, with potential exception of type class instances declarations.</p>
+<h2>Getters and setters</h2>
 <p>Do not prefix getters with <code>get</code>, just name the getter after the thing it retrieves:</p>
 <pre><code class="language-scala">trait Nameable {
   def name: String
 }
+</code></pre>
+<p>In those (rare) cases when you need to declare a setter, use the standard Scala convention:</p>
+<pre><code class="language-scala">trait Nameable {
+  def name: String
+  def name_=(n: String): Unit
+</code></pre>
+<p>This syntax allows using the assignment syntax to change the property:</p>
+<pre><code class="language-scala">val obj: Nameable = ...
+obj.name = &quot;whatever&quot;
 </code></pre>
 <h2>Names shadowing</h2>
 <p>Avoid clashes of the names with pattern matching, e.g. don't do this:</p>
@@ -167,14 +183,23 @@ organization match {
   case Organization(owner) =&gt; ...
 }
 </code></pre>
-<p>Names shadowing can be resolved by the IDEs, but nevertheless is a bad idea because it is very easy to mistake one variable for another. Use more appropriate names for each variable and pattern.</p>
+<p>Names shadowing can be resolved by the IDEs through syntax highlighting, but nevertheless is a bad idea because it is very easy to mistake one variable for another. Use more appropriate names for each variable and pattern.</p>
 <h1>Imports</h1>
 <h2>Imports order</h2>
-<p>Use the IDEA imports optimizer to sort imports. <strong>TODO: add the snippet with the imports configuration</strong> Source code files should not contain unused imports.</p>
+<p>Use the IDEA imports optimizer to sort imports. The following IDEA configuration snippet displays the optimal sort order:</p>
+<pre><code>java
+_______ blank line _______
+scala
+_______ blank line _______
+all other imports
+_______ blank line _______
+your.app.root.package
+</code></pre>
+<p>Source code files should not contain unused imports. Use IDEA imports optimizer to fix this, but remember that sometimes IDEA may remove imports which are actually used (this happens mostly with importing of implicits).</p>
 <h2>Relative imports</h2>
-<p>Always use absolute imports; IDEA code style configuration enforces this. Relative imports almost always decrease the readability.</p>
+<p>Always use absolute imports; IDEA code style configuration should enforce this. Relative imports almost always decrease the readability.</p>
 <h2>Imports location</h2>
-<p>Always put imports at the top of the file instead of nested scopes. In other words, imports must always be grouped together in one place.</p>
+<p>Always put imports at the top of the file instead of nested scopes. In other words, imports must always be grouped together in one place. The only exception is when you need to use some kind of <a href="../patterns-and-architecture/domain-specific-languages.html">DSL</a> which provides many identifiers which you don't want to pollute the file namespace. Examples of such DSLs are Cassandra's <code>QueryBuilder</code> and akka-streams <code>GraphDSL</code>.</p>
 <h2>Wildcard imports</h2>
 <p>Avoid using wildcard imports, unless you're importing more than 6 items from the same package. This behavior is also enforced by IDEA.</p>
 <h1>Braces</h1>
@@ -219,7 +244,7 @@ someFunction(arg1, arg2, arg3, arg4)
   * ...
   */
 </code></pre>
-<p>Public API must always be documented with Scaladoc.</p>
+<p>Public API must always be documented with Scaladoc. This includes public methods, classes/objects and constants. Make sure to keep the documentation up-to-date with code changes.</p>
 <p>Write comments to clarify parts of logic which are not obvious, but <em>only</em> when it is absolutely impossible to rewrite the logic to be obvious in the first place. In general, try follow the rule &quot;readable code comments itself&quot;.</p>
 <p><code>TODO:</code>-like comments are acceptable when they are really necessary but should not be overused.</p>
 <h1>Type system</h1>
@@ -307,8 +332,8 @@ val x = new Container
 val c1 = Vector[x.Item]()
 </code></pre>
 <p>In other words, it is possible for types to depend on the value, or, more correctly, on the &quot;path&quot; to the type, expressed in terms of values.</p>
-<p>This is one of the most confusing features of Scala type system, and while it can lead to more type safe code when used correctly, it is very difficult to actually used it correctly, and it may produce quite incomprehensible errors.</p>
-<p>Therefore, using path-dependent types is forbidden. There is almost always a better way to do something than  relying on them.</p>
+<p>This is one of the most confusing features of Scala type system, and while it can lead to more type safe code when used correctly, it is very difficult to actually use it correctly, and it may produce quite incomprehensible errors.</p>
+<p>Therefore, using path-dependent types is forbidden. There is almost always a better way to do something than relying on them.</p>
 <h1>Type aliases</h1>
 <p>Defining type aliases for complex types is encouraged. However, self-explanatory types need not to be aliased. The following is a bad example:</p>
 <pre><code class="language-scala">type IntMaker = () =&gt; Int
@@ -702,7 +727,32 @@ val orderedVotes = sumByLang.toSeq
   .sortBy { case (_, count) =&gt; count }
   .reverse
 </code></pre>
-<h1>Operations nesting and for comprehensions</h1>
+<h1>Operations nesting and <code>for</code> comprehensions</h1>
+<p><code>for</code> comprehensions are a very nice syntactic sugar in Scala which allows expressing certain patterns in a very clean way. Of course, just like any other feature, it is crucial not to overuse it.</p>
+<p>As a rule of thumb, prefer <code>for</code> comprehensions to nested <code>flatMap</code>s and <code>map</code>s, for example, when you need to flatten several collections. <code>for</code> comprehensions are rewritten internally into a nested sequence of method calls, so be careful for using <code>for</code>s in performance-critical code.</p>
+<p>Be aware of implications of using <code>for</code> comprehensions for futures. See the section on concurrency for more on that.</p>
+<h2>Using <code>for</code> comprehensions for different types</h2>
+<p><code>for</code> comprehensions may be used with types which have <code>flatMap</code>, <code>map</code> and <code>withFilter</code> methods, and they do not guard you from using different types for each binding clause if it is allowed by typing:</p>
+<pre><code class="language-scala">val ints = Vector(1, 2, 4, 5)
+val m = Map(1 -&gt; &quot;a&quot;, 3 -&gt; &quot;c&quot;)
+
+for {
+  n &lt;- ints
+  s &lt;- m.get(n)
+} yield s
+</code></pre>
+<p>This compiles, even though <code>ints</code> is of type <code>Vector[Int]</code> and <code>m.get(n)</code> is of type <code>Option[String]</code>. This is compiled into</p>
+<pre><code class="language-scala">ints.flatMap(n =&gt; m.get(n))
+</code></pre>
+<p><code>flatMap</code> on Scala collections allows its argument function to return anything convertible to an iterable, and <code>Option[T]</code> satisfies this requirement. This makes the code harder to understand and, in some subtle cases, may lead to unexpected behavior, in particular, when collections with uniqueness semantics of keys or values (like maps or sets) are used. Therefore, in most cases when you need to iterate over multiple collections in a nested fashion, convert them to a common type. Usually it makes sense to use <code>.iterator</code> for that:</p>
+<pre><code class="language-scala">val resultsIterator = for {
+  (interface, peers) &lt;- signals.iterator
+  (peer, values) &lt;- peers.iterator
+  value &lt;- values.iterator
+} yield interface -&gt; value
+
+val results = resultsIterator.toMap
+</code></pre>
 <h1>String interpolation</h1>
 <p>Scala allows writing references to other variables in scope inside strings using a special syntax:</p>
 <pre><code class="language-scala">val n = 10
@@ -1025,10 +1075,32 @@ new Outer(10).makeInner.printN()  // prints 10
 <p>Scala has a very powerful collections library, which contains immutable, mutable and parallel collections for virtually any purpose. While its implementation is quite complex, and extending it may be hard and would require using complex language features like higher-kinded types and implicits, in the everyday work it is very easy to use. To use the collections library efficiently, it is highly recommended to read <a href="http://docs.scala-lang.org/overviews/collections/introduction.html">the official overview</a> of the collections library first.</p>
 <h2>Overview</h2>
 <p>Here is a diagram of the basic collection types, both mutable and immutable:</p>
-<p><strong>TODO (traversable, iterable, seq, set, map)</strong></p>
+<pre><code>                            +-----------------+
+                            |                 |
+                            |   Traversable   |
+                            |                 |
+                            +--------+--------+
+                                     ^
+                                     |
+                                     |
+                            +--------+--------+
+                            |                 |
+                            |    Iterable     |
+                            |                 |
+                            +----+---+---+----+
+                                 |   ^   |
+         +-----------------------^   |   ^-----------------------+
+         |                           |                           |
++--------+--------+         +--------+--------+         +--------+--------+
+|                 |         |                 |         |                 |
+|       Seq       |         |       Set       |         |       Map       |
+|                 |         |                 |         |                 |
++-----------------+         +-----------------+         +-----------------+
+
+</code></pre>
 <p>The base trait, <code>Traversable[T]</code>, represents something which can be internally iterated - it provides a <code>foreach(f: T =&gt; Unit)</code> method which calls its argument for every item contained in the collection. This trait is very general and it can describe not only regular collections like lists or sets, but also e.g. ephemeral streams of data.</p>
 <p><code>Iterable[T]</code> is something which can be externally iterated - being quite similar to Java's <code>Iterable&lt;T&gt;</code>, it has one method, <code>def iterator: Iterator[T]</code>, which returns an iterator which can be used to walk over the collection. <code>foreach()</code> implementation for an <code>Iterable</code> is trivial, therefore it extends <code>Traversable</code>.</p>
-<p><code>Seq</code>, <code>Set</code> and <code>Map</code> are base types for the respective &quot;kinds&quot; of collections. <code>Seq</code>s are collections whose items are laid out sequentially and therefore can be accessed using zero-based index. <code>Set</code>s are collections which cannot contain duplicate elements, and usually have effective membership check. <code>Map</code>s are collections of key-value pairs where keys are unique, and they usually have effective lookup by key.</p>
+<p><code>Seq</code>, <code>Set</code> and <code>Map</code> are base types for the respective &quot;kinds&quot; of collections. <code>Seq</code>s are collections whose items are laid out sequentially and therefore can be accessed using a zero-based index. <code>Set</code>s are collections which cannot contain duplicate elements, and usually have effective membership check. <code>Map</code>s are collections of key-value pairs where keys are unique, and they usually have effective lookup by key.</p>
 <p>There is one weird quirk of the standard Scala library which should always be taken into account. <code>Map</code> and <code>Set</code>, when used in the regular code without any special imports, come from <code>scala.Predef</code> object (whose internals are imported into every Scala file automatically), and there they are declared as aliases to <code>scala.collection.immutable.*</code> types:</p>
 <pre><code class="language-scala">type Map = scala.collection.immutable.Map
 type Set = scala.collection.immutable.Set
@@ -1117,9 +1189,15 @@ val itemsById = items.iterator.map(item =&gt; item.id -&gt; item).toMap
 val itemsByName = itemsByNameIterator.toMap
 </code></pre>
 <p>When you assign iterators to variables, name the variables with <code>Iterator</code> suffix to distinguish them from regular collections.</p>
+<h3>Views</h3>
 <p>An alternative to iterators would be using collection views, which are essentially reusable iterators. However, views in Scala implement the same interfaces as regular collections, and therefore it is easy to store e.g. <code>MapView</code> as a <code>Map</code>. This is bad, because transformations applied to views are not executed eagerly, they are delayed until elements of the view are accessed, just like with iterators. When such a view is stored in a frequently used variable, all these transformations will be recomputed each time when elements of the view are accessed.</p>
 <p>Using views may sometimes be beneficial (e.g. when you want to keep the concrete type of a collection after a sequence of transformations), but it is very easy to forget to call <code>.force</code> on the view object to go back to a non-ephemeral collection, so they should be used with care. Never return views from functions, and never store views into other objects; they must be used only for temporary transformations. If you need to create a reusable part of a transformation chain, create a function which returns <code>Iterator</code> instead.</p>
-<p>Another thing to be aware of with regard to views is that some of the convenient collection methods like <code>.mapValues</code> on a map actually return views instead of doing transformations, however, such views do not actually implement the view traits and therefore they do not have a <code>.force</code> method. <strong>TODO: add a list of such methods here</strong></p>
+<p>Another thing to be aware of with regard to views is that some of the convenient collection methods actually return views instead of doing transformations, however, such views do not actually implement the view traits and therefore they do not have a <code>.force</code> method. Examples of such methods are:</p>
+<ul>
+<li><code>Map.mapValues</code></li>
+<li><code>Map.filterValues</code></li>
+</ul>
+<p>It is dangerous to use these methods because the objects they return will recompute the mapping/filtering function each time their values are accessed. One of the ways to work around this is to call <code>.view.force</code> chain of methods which will always create a new map out of this &quot;view&quot;.</p>
 <p>If you're doing only a single transformation operation, and you need to get a collection of the same type as the original collection, omit the iterator conversion because the necessary type will be constructed automatically:</p>
 <pre><code class="language-scala">val itemIds: Set[String] = ...
 val items: Set[Item] = itemIds.flatMap(itemsDao.findById)

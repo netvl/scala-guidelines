@@ -67,51 +67,52 @@
                 </div>
 
                 <div id="content" class="content">
-                    <h1>Reference for code reviewers (TODO)</h1>
+                    <h1>Reference for code reviewers</h1>
 <p>This section summarizes the entire guide in order to help those who perform code reviews to catch common mistakes and deviations from the code style guidelines. Consult this section when you're reviewing someone else's code to remind yourself the most common things which you should be on the lookout for.</p>
 <p>Subsections of this section describe the things which require paying attention for during the code reviews. There are patterns which are forbidden to be used, and if you see one, you must not sign the patch which introduces it off. Other patterns, while not forbidden, require to be sufficiently motivated to pass the review.</p>
-<p>Remember, the main intention of this guide is to increase the readability and maintainability of the code, so when reviewing someone else's code, always keep this in mind and try to consider how it will affect the long-term quality of the code base and how easy it would be for someone unfamiliar with the project to understand it.</p>
-<h2>Forbidden (TODO)</h2>
+<p>Remember, the main intention of this guide is to increase the readability and maintainability of the code, so, when you are reviewing someone else's code, always keep this in mind and try to consider how it will affect the long-term quality of the code base and how easy it would be for someone unfamiliar with the project to understand it.</p>
+<h2>Forbidden</h2>
 <p>The following language features and patterns are forbidden to be used in any case. Do not accept a patch if it contains any of them. Some of these items are automatically checked for by build system tools.</p>
 <ul>
-<li><a href="#implicit-conversions">Implicit conversions</a></li>
-<li><a href="#structural-typing">Structural typing</a></li>
-<li><a href="#abstract-associated-types">Abstract types</a> (do not confuse them with regular type aliases)</li>
-<li><a href="#path-dependent-types">Path-dependent types</a></li>
-<li>Declaring custom <a href="#higher-kinded-types">higher-kinded types</a></li>
-<li>Missing <a href="#override-modifier"><code>override</code> modifier</a> when it is applicable</li>
-<li>Missing <a href="#return-type-annotations">return type annotations</a> on the parts of public API</li>
-<li><a href="#abstract-override-modifier"><code>abstract override</code></a></li>
-<li><a href="#apply-method-on-classes"><code>apply()</code> and <code>unapply()</code> methods in classes</a></li>
-<li><a href="#symbolic-methods-and-infix-and-postfix-notation">Custom symbolic methods declaration</a></li>
-<li>Postfix method calls</li>
-<li><code>catch { case e: Throwable =&gt; }</code> or <code>catch { case _ =&gt; }</code></li>
-<li>Custom macros</li>
-<li>Cake pattern</li>
-<li><code>var</code> members or other mutable objects in case classes</li>
-<li><code>var</code> or <code>lazy val</code> as abstract members</li>
-<li>Defining custom DSLs</li>
-<li><code>null</code> (except for interaction with badly written Java libraries)</li>
-<li>Returning collection views from functions and storing them in other objects</li>
+<li><a href="language-features/implicits.html#Implicit%20conversions">Implicit conversions</a></li>
+<li><a href="type-system/structural-typing.html">Structural typing</a></li>
+<li><a href="type-system/abstract-types.html">Abstract types</a> (do not confuse them with regular type aliases)</li>
+<li><a href="type-system/path-dependent-types.html">Path-dependent types</a></li>
+<li>Declaring custom <a href="type-system/higher-kinded-types.html">higher-kinded types</a></li>
+<li>Missing <a href="language-features/override-modifier.html"><code>override</code> modifier</a> when it is applicable</li>
+<li>Missing <a href="type-system/return-type-annotations.html">return type annotations</a> on the parts of public API</li>
+<li><a href="language-features/abstract-override-modifier.html"><code>abstract override</code></a></li>
+<li><a href="language-features/apply-method-on-classes.html"><code>apply()</code></a> and <a href="language-features/pattern-matching.html#unapply%20methods"><code>unapply()</code></a> methods in classes</li>
+<li><a href="language-features/symbolic-methods-and-infix-and-postfix-notation.html">Custom symbolic methods declaration</a></li>
+<li><a href="language-features/symbolic-methods-and-infix-and-postfix-notation.html">Postfix method calls</a></li>
+<li><a href="language-features/exception-handling.html"><code>catch { case e: Throwable =&gt; }</code> or <code>catch { case _ =&gt; }</code></a></li>
+<li><a href="language-features/macros.html">Custom macros</a></li>
+<li><a href="patterns-and-architecture/cake-pattern.html">Cake pattern</a></li>
+<li><a href="patterns-and-architecture/functional-programming.html#Immutability"><code>var</code> members or other mutable objects in case classes</a></li>
+<li><a href="patterns-and-architecture/object-oriented-programming.html#Members"><code>var</code> or <code>lazy val</code> as abstract members</a></li>
+<li><a href="patterns-and-architecture/domain-specific-languages.html">Defining custom DSLs</a></li>
+<li><a href="patterns-and-architecture/functional-programming.html#Options%20and%20null"><code>null</code>s</a> (except for interaction with Java libraries)</li>
+<li>Returning <a href="libraries/collections.html#Views">collection views</a> from functions and storing them in other objects</li>
 </ul>
-<h2>Suspicious (TODO)</h2>
+<h2>Suspicious</h2>
 <p>If you notice the following language features and patterns in the submitted code, you should take especially utmost care in reviewing them. Always ask yourself, whether it is possible to do away without using them altogether. Their usage should usually be motivated by a significant increase in code clarity and readability; do not hesitate to ask the author of the code to explain why they used these items and to rewrite the code without them if it benefits code readability (especially for developers who are unfamiliar with the code base) and maintainability.</p>
 <ul>
-<li>Missing return type annotations in non-public code</li>
-<li><code>Any</code>, <code>AnyRef</code>, <code>AnyVal</code> and <code>isInstanceOf</code> and <code>asInstanceOf</code></li>
-<li>Implicits in general: implicit arguments and implicit classes</li>
-<li><code>unapply()</code> methods</li>
-<li>Multiple parameter lists</li>
-<li>Infix notation</li>
-<li>Call-by-name arguments</li>
-<li>Operations chains, operations nesting</li>
-<li>Tuples and their elements accessors</li>
-<li>Definition of custom type classes (should have <em>significant</em> motivation to be accepted)</li>
-<li><code>null</code>s again</li>
-<li><code>Option.get</code></li>
-<li>Recursion</li>
-<li>Abstract <code>val</code> members</li>
-<li>Using DSLs provided by third-party libraries (only in exceptional cases when it cannot be avoided)</li>
+<li><a href="type-system/any-anyref-and-anyval.html"><code>Any</code>, <code>AnyRef</code>, <code>AnyVal</code></a></li>
+<li><a href="type-system/isinstanceof-asinstanceof.html"><code>isInstanceOf</code> and <code>asInstanceOf</code></a></li>
+<li><a href="language-features/implicits.html">Implicits</a> in general, implicit arguments and implicit classes in particular</li>
+<li><a href="language-features/pattern-matching.html#unapply%20methods"><code>unapply()</code></a> methods</li>
+<li><a href="language-features/multiple-parameter-lists.html">Multiple parameter lists</a></li>
+<li><a href="language-features/symbolic-methods-and-infix-and-postfix-notation.html">Infix notation</a></li>
+<li><a href="language-features/call-by-name.html">Call-by-name</a> arguments</li>
+<li><a href="language-features/operation-chains.html">Operation chains</a> and <a href="language-features/operations-nesting-and-for-comprehensions.html">operations nesting</a></li>
+<li><a href="language-features/tuples.html">Tuples</a> and their elements accessors</li>
+<li>Definition of custom <a href="language-features/type-classes.html">type classes</a></li>
+<li><a href="patterns-and-architecture/functional-programming.html#Options%20and%20null"><code>null</code>s</a> again</li>
+<li><a href="patterns-and-architecture/functional-programming.html#Options%20and%20null"><code>Option.get</code></a></li>
+<li><a href="patterns-and-architecture/functional-programming.html#Recursion">Recursion</a></li>
+<li><a href="patterns-and-architecture/object-oriented-programming.html#Members">Abstract <code>val</code> members</a></li>
+<li><a href="patterns-and-architecture/domain-specific-languages.html">Using DSLs</a> provided by third-party libraries</li>
+<li>Missing <a href="type-system/return-type-annotations.html">return type annotations</a> in non-public code</li>
 </ul>
 
                 </div>

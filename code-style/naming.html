@@ -71,7 +71,7 @@
 <h2>Length of names</h2>
 <p>Follow the rule &quot;longer names for larger scopes, shorter names for smaller scopes&quot;. One-letter names for numeric loops indices are acceptable, same names for most of local variables and pattern variables are not.</p>
 <h2>Apostrophes</h2>
-<p>Avoid using `s to overload reserved names. Use of apostrophes in pattern matching for equality checking, on the other hand, is acceptable:</p>
+<p>Avoid using `s to overload reserved names, except when there is a need to integrate with Java API or when the alternative reads significantly worse. Use of apostrophes in pattern matching for equality checking, on the other hand, is acceptable:</p>
 <pre><code class="language-scala">val name = &quot;hello&quot;
 
 x match {
@@ -81,12 +81,21 @@ x match {
 <h2>Constant names</h2>
 <p>Constants must always follow the <code>PascalCase</code> naming rule, according to the default style used in Scala community. Do not use <code>CAPITAL_SNAKE_CASE</code> or <code>camelCase</code> for constant names.</p>
 <p>Constants must always be defined in objects. If a constant is only used in one class, then it should be defined in its companion object. If a constant is used in multiple classes, it should be defined in some common object.</p>
-<p>Constants must not be defined in package objects.</p>
-<h2>Getters</h2>
+<p>Constants must not be defined in package objects, with potential exception of type class instances declarations.</p>
+<h2>Getters and setters</h2>
 <p>Do not prefix getters with <code>get</code>, just name the getter after the thing it retrieves:</p>
 <pre><code class="language-scala">trait Nameable {
   def name: String
 }
+</code></pre>
+<p>In those (rare) cases when you need to declare a setter, use the standard Scala convention:</p>
+<pre><code class="language-scala">trait Nameable {
+  def name: String
+  def name_=(n: String): Unit
+</code></pre>
+<p>This syntax allows using the assignment syntax to change the property:</p>
+<pre><code class="language-scala">val obj: Nameable = ...
+obj.name = &quot;whatever&quot;
 </code></pre>
 <h2>Names shadowing</h2>
 <p>Avoid clashes of the names with pattern matching, e.g. don't do this:</p>
@@ -104,7 +113,7 @@ organization match {
   case Organization(owner) =&gt; ...
 }
 </code></pre>
-<p>Names shadowing can be resolved by the IDEs, but nevertheless is a bad idea because it is very easy to mistake one variable for another. Use more appropriate names for each variable and pattern.</p>
+<p>Names shadowing can be resolved by the IDEs through syntax highlighting, but nevertheless is a bad idea because it is very easy to mistake one variable for another. Use more appropriate names for each variable and pattern.</p>
 
                 </div>
 

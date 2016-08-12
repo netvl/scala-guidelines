@@ -67,7 +67,32 @@
                 </div>
 
                 <div id="content" class="content">
-                    <h1>Operations nesting and for comprehensions</h1>
+                    <h1>Operations nesting and <code>for</code> comprehensions</h1>
+<p><code>for</code> comprehensions are a very nice syntactic sugar in Scala which allows expressing certain patterns in a very clean way. Of course, just like any other feature, it is crucial not to overuse it.</p>
+<p>As a rule of thumb, prefer <code>for</code> comprehensions to nested <code>flatMap</code>s and <code>map</code>s, for example, when you need to flatten several collections. <code>for</code> comprehensions are rewritten internally into a nested sequence of method calls, so be careful for using <code>for</code>s in performance-critical code.</p>
+<p>Be aware of implications of using <code>for</code> comprehensions for futures. See the section on concurrency for more on that.</p>
+<h2>Using <code>for</code> comprehensions for different types</h2>
+<p><code>for</code> comprehensions may be used with types which have <code>flatMap</code>, <code>map</code> and <code>withFilter</code> methods, and they do not guard you from using different types for each binding clause if it is allowed by typing:</p>
+<pre><code class="language-scala">val ints = Vector(1, 2, 4, 5)
+val m = Map(1 -&gt; &quot;a&quot;, 3 -&gt; &quot;c&quot;)
+
+for {
+  n &lt;- ints
+  s &lt;- m.get(n)
+} yield s
+</code></pre>
+<p>This compiles, even though <code>ints</code> is of type <code>Vector[Int]</code> and <code>m.get(n)</code> is of type <code>Option[String]</code>. This is compiled into</p>
+<pre><code class="language-scala">ints.flatMap(n =&gt; m.get(n))
+</code></pre>
+<p><code>flatMap</code> on Scala collections allows its argument function to return anything convertible to an iterable, and <code>Option[T]</code> satisfies this requirement. This makes the code harder to understand and, in some subtle cases, may lead to unexpected behavior, in particular, when collections with uniqueness semantics of keys or values (like maps or sets) are used. Therefore, in most cases when you need to iterate over multiple collections in a nested fashion, convert them to a common type. Usually it makes sense to use <code>.iterator</code> for that:</p>
+<pre><code class="language-scala">val resultsIterator = for {
+  (interface, peers) &lt;- signals.iterator
+  (peer, values) &lt;- peers.iterator
+  value &lt;- values.iterator
+} yield interface -&gt; value
+
+val results = resultsIterator.toMap
+</code></pre>
 
                 </div>
 

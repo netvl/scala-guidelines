@@ -67,8 +67,14 @@
                 </div>
 
                 <div id="content" class="content">
-                    <h1>General code style (TODO?)</h1>
+                    <h1>General code style</h1>
 <p>As a general rule, constantly monitor warnings and other notices which your IDE shows you. IntelliJ IDEA in particular has clever analysis features which are very helpful to avoid many mistakes in the code style. If you use IDEA to make commits, enable &quot;Before commit / Perform code analysis&quot; option in its commit window - it will display all errors and warnings it sees in the code you're about to commit.</p>
+<p>Sometime it is necessary to disable Scalastyle checks for a particular piece of code. To do so, you have to wrap the section of code with the following comments:</p>
+<pre><code class="language-scala">// scalastyle:off public.methods.have.type
+...
+// scalastyle:on public.methods.have.type
+</code></pre>
+<p>An example of when this would be necessary are null-heavy pieces of code (when interacting with Java libraries) or Play controllers in which public methods do not actually need return types.</p>
 
                 </div>
 

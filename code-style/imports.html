@@ -69,11 +69,20 @@
                 <div id="content" class="content">
                     <h1>Imports</h1>
 <h2>Imports order</h2>
-<p>Use the IDEA imports optimizer to sort imports. <strong>TODO: add the snippet with the imports configuration</strong> Source code files should not contain unused imports.</p>
+<p>Use the IDEA imports optimizer to sort imports. The following IDEA configuration snippet displays the optimal sort order:</p>
+<pre><code>java
+_______ blank line _______
+scala
+_______ blank line _______
+all other imports
+_______ blank line _______
+your.app.root.package
+</code></pre>
+<p>Source code files should not contain unused imports. Use IDEA imports optimizer to fix this, but remember that sometimes IDEA may remove imports which are actually used (this happens mostly with importing of implicits).</p>
 <h2>Relative imports</h2>
-<p>Always use absolute imports; IDEA code style configuration enforces this. Relative imports almost always decrease the readability.</p>
+<p>Always use absolute imports; IDEA code style configuration should enforce this. Relative imports almost always decrease the readability.</p>
 <h2>Imports location</h2>
-<p>Always put imports at the top of the file instead of nested scopes. In other words, imports must always be grouped together in one place.</p>
+<p>Always put imports at the top of the file instead of nested scopes. In other words, imports must always be grouped together in one place. The only exception is when you need to use some kind of <a href="../patterns-and-architecture/domain-specific-languages.html">DSL</a> which provides many identifiers which you don't want to pollute the file namespace. Examples of such DSLs are Cassandra's <code>QueryBuilder</code> and akka-streams <code>GraphDSL</code>.</p>
 <h2>Wildcard imports</h2>
 <p>Avoid using wildcard imports, unless you're importing more than 6 items from the same package. This behavior is also enforced by IDEA.</p>
 
