@@ -126,6 +126,7 @@
 <li><a href="patterns-and-architecture/domain-specific-languages.html">Using DSLs</a> provided by third-party libraries</li>
 <li>Missing <a href="type-system/return-type-annotations.html">return type annotations</a> in non-public code</li>
 </ul>
+<h2>Recommended</h2>
 <h1>General code style</h1>
 <p>As a general rule, constantly monitor warnings and other notices which your IDE shows you. IntelliJ IDEA in particular has clever analysis features which are very helpful to avoid many mistakes in the code style. If you use IDEA to make commits, enable &quot;Before commit / Perform code analysis&quot; option in its commit window - it will display all errors and warnings it sees in the code you're about to commit.</p>
 <p>Sometime it is necessary to disable Scalastyle checks for a particular piece of code. To do so, you have to wrap the section of code with the following comments:</p>
@@ -184,6 +185,30 @@ organization match {
 }
 </code></pre>
 <p>Names shadowing can be resolved by the IDEs through syntax highlighting, but nevertheless is a bad idea because it is very easy to mistake one variable for another. Use more appropriate names for each variable and pattern.</p>
+<h2>Nested classes</h2>
+<p>Do not neglect the ability to define classes inside objects. Often, it is very useful to group multiple classes together under a single object. This is especially important when you define an algebraic data type.</p>
+<h3>Common names usage</h3>
+<p>Sometimes you would need to use a common class name for your own purpose, for example, names of primitive types or other predefined types. In such cases it is encouraged to use the respective name, but put the class inside an enclosing object. In other words, do this:</p>
+<pre><code class="language-scala">sealed trait TypeName
+object TypeName {
+  case class String(...) extends TypeName
+  case class Int(...) extends TypeName
+  case class Double(...) extends TypeName
+}
+</code></pre>
+<p>do not do this:</p>
+<pre><code class="language-scala">object TypeName {
+  case class StringTypeName(...) extends TypeName
+  case class IntTypeName(...) extends TypeName
+  case class DoubleTypeName(...) extends TypeName
+}
+</code></pre>
+<p>and especially do not do this:</p>
+<pre><code class="language-scala">sealed trait TypeName
+case class StringTypeName(...) extends TypeName
+case class IntTypeName(...) extends TypeName
+case class DoubleTypeName(...) extends TypeName
+</code></pre>
 <h1>Imports</h1>
 <h2>Imports order</h2>
 <p>Use the IDEA imports optimizer to sort imports. The following IDEA configuration snippet displays the optimal sort order:</p>
@@ -202,6 +227,45 @@ your.app.root.package
 <p>Always put imports at the top of the file instead of nested scopes. In other words, imports must always be grouped together in one place. The only exception is when you need to use some kind of <a href="../patterns-and-architecture/domain-specific-languages.html">DSL</a> which provides many identifiers which you don't want to pollute the file namespace. Examples of such DSLs are Cassandra's <code>QueryBuilder</code> and akka-streams <code>GraphDSL</code>.</p>
 <h2>Wildcard imports</h2>
 <p>Avoid using wildcard imports, unless you're importing more than 6 items from the same package. This behavior is also enforced by IDEA.</p>
+<h2>Importing object internals</h2>
+<p>Avoid importing inner classes and methods from objects. For example, do this:</p>
+<pre><code class="language-scala">object SomeObject {
+  class SomeClass
+
+  def someMethod(): SomeClass = ...
+}
+
+val t: SomeObject.SomeClass = SomeObject.someMethod()
+</code></pre>
+<p>instead of this</p>
+<pre><code class="language-scala">import SomeObject.{SomeClass, someMethod}
+
+val t: SomeClass = someMethod()
+</code></pre>
+<p>While this may marginally decrease clutter, it makes it unclear where the respective methods come from, and, more importantly, whether they are defined in the same class or not. Moreover, some types and values are intended to be used with explicit qualifications, for example:</p>
+<pre><code class="language-scala">sealed trait TypeName
+object TypeName {
+  case class String(...) extends TypeName
+  case class Int(...) extends TypeName
+  case class Double(...) extends TypeName
+}
+</code></pre>
+<p>Here, importing internals of <code>TypeName</code> may cause havok in the respective code because these names will override the standard names for primitive types. When they are used with the qualifer, like <code>TypeName.String</code>, it is perfectly okay and does not cause problems.</p>
+<p>The same reasoning should be applied to constants defined in objects as well, although there is an exception: if a constant is used multiple times, especially inside string patterns, it is okay to import it:</p>
+<pre><code class="language-scala">import SomeObject.{Constant1, Constant2, Constant3}
+
+val pattern = s&quot;&quot;&quot;
+  |Some text with patterns $Constant1 intermixed
+  |with $Constant1 constants $Constant2 multiple
+  |$Constant3 lines and whatever&quot;&quot;&quot;.stripMargin
+
+object SomeObject {
+  val Constant1 = ...
+  val Constant2 = ...
+  val Constant3 = ...
+  ...
+}
+</code></pre>
 <h1>Braces</h1>
 <h2>Definitions</h2>
 <p>Avoid using braces for simple expressions; write this:</p>
@@ -1100,7 +1164,7 @@ new Outer(10).makeInner.printN()  // prints 10
 </code></pre>
 <p>The base trait, <code>Traversable[T]</code>, represents something which can be internally iterated - it provides a <code>foreach(f: T =&gt; Unit)</code> method which calls its argument for every item contained in the collection. This trait is very general and it can describe not only regular collections like lists or sets, but also e.g. ephemeral streams of data.</p>
 <p><code>Iterable[T]</code> is something which can be externally iterated - being quite similar to Java's <code>Iterable&lt;T&gt;</code>, it has one method, <code>def iterator: Iterator[T]</code>, which returns an iterator which can be used to walk over the collection. <code>foreach()</code> implementation for an <code>Iterable</code> is trivial, therefore it extends <code>Traversable</code>.</p>
-<p><code>Seq</code>, <code>Set</code> and <code>Map</code> are base types for the respective &quot;kinds&quot; of collections. <code>Seq</code>s are collections whose items are laid out sequentially and therefore can be accessed using a zero-based index. <code>Set</code>s are collections which cannot contain duplicate elements, and usually have effective membership check. <code>Map</code>s are collections of key-value pairs where keys are unique, and they usually have effective lookup by key.</p>
+<p><code>Seq</code>, <code>Set</code> and <code>Map</code> are base types for the respective &quot;kinds&quot; of collections. <code>Seq</code>s are collections whose items are laid out sequentially and therefore can be accessed using a zero-based index. <code>Set</code>s are collections which cannot contain duplicate elements, and usually have an effective membership check. <code>Map</code>s are collections of key-value pairs where keys are unique, and they usually have effective lookup by key.</p>
 <p>There is one weird quirk of the standard Scala library which should always be taken into account. <code>Map</code> and <code>Set</code>, when used in the regular code without any special imports, come from <code>scala.Predef</code> object (whose internals are imported into every Scala file automatically), and there they are declared as aliases to <code>scala.collection.immutable.*</code> types:</p>
 <pre><code class="language-scala">type Map = scala.collection.immutable.Map
 type Set = scala.collection.immutable.Set
