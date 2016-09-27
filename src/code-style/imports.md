@@ -27,3 +27,56 @@ Always put imports at the top of the file instead of nested scopes. In other wor
 ## Wildcard imports
 
 Avoid using wildcard imports, unless you're importing more than 6 items from the same package. This behavior is also enforced by IDEA.
+
+## Importing object internals
+
+Avoid importing inner classes and methods from objects. For example, do this:
+
+```scala
+object SomeObject {
+  class SomeClass
+
+  def someMethod(): SomeClass = ...
+}
+
+val t: SomeObject.SomeClass = SomeObject.someMethod()
+```
+
+instead of this
+
+```scala
+import SomeObject.{SomeClass, someMethod}
+
+val t: SomeClass = someMethod()
+```
+
+While this may marginally decrease clutter, it makes it unclear where the respective methods come from, and, more importantly, whether they are defined in the same class or not. Moreover, some types and values are intended to be used with explicit qualifications, for example:
+
+```scala
+sealed trait TypeName
+object TypeName {
+  case class String(...) extends TypeName
+  case class Int(...) extends TypeName
+  case class Double(...) extends TypeName
+}
+```
+
+Here, importing internals of `TypeName` may cause havok in the respective code because these names will override the standard names for primitive types. When they are used with the qualifer, like `TypeName.String`, it is perfectly okay and does not cause problems.
+
+The same reasoning should be applied to constants defined in objects as well, although there is an exception: if a constant is used multiple times, especially inside string patterns, it is okay to import it:
+
+```scala
+import SomeObject.{Constant1, Constant2, Constant3}
+
+val pattern = s"""
+  |Some text with patterns $Constant1 intermixed
+  |with $Constant1 constants $Constant2 multiple
+  |$Constant3 lines and whatever""".stripMargin
+
+object SomeObject {
+  val Constant1 = ...
+  val Constant2 = ...
+  val Constant3 = ...
+  ...
+}
+```

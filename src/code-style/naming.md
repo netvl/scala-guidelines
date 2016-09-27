@@ -73,3 +73,40 @@ organization match {
 ```
 
 Names shadowing can be resolved by the IDEs through syntax highlighting, but nevertheless is a bad idea because it is very easy to mistake one variable for another. Use more appropriate names for each variable and pattern.
+
+## Nested classes
+
+Do not neglect the ability to define classes inside objects. Often, it is very useful to group multiple classes together under a single object. This is especially important when you define an algebraic data type.
+
+### Common names usage
+
+Sometimes you would need to use a common class name for your own purpose, for example, names of primitive types or other predefined types. In such cases it is encouraged to use the respective name, but put the class inside an enclosing object. In other words, do this:
+
+```scala
+sealed trait TypeName
+object TypeName {
+  case class String(...) extends TypeName
+  case class Int(...) extends TypeName
+  case class Double(...) extends TypeName
+}
+```
+
+do not do this:
+
+```scala
+object TypeName {
+  case class StringTypeName(...) extends TypeName
+  case class IntTypeName(...) extends TypeName
+  case class DoubleTypeName(...) extends TypeName
+}
+```
+
+and especially do not do this:
+
+```scala
+sealed trait TypeName
+case class StringTypeName(...) extends TypeName
+case class IntTypeName(...) extends TypeName
+case class DoubleTypeName(...) extends TypeName
+```
+

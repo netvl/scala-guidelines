@@ -50,3 +50,7 @@ If you notice the following language features and patterns in the submitted code
 * [Abstract `val` members](patterns-and-architecture/object-oriented-programming.html#Members)
 * [Using DSLs](patterns-and-architecture/domain-specific-languages.html) provided by third-party libraries
 * Missing [return type annotations](type-system/return-type-annotations.html) in non-public code
+
+## Recommended
+
+    
